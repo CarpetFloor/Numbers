@@ -1,3 +1,5 @@
+// make sure to add time limit, and make it changeable
+
 let c, r, w, h;
 
 const margins = {
@@ -196,5 +198,10 @@ function loop() {
     // r.fillStyle = "slateblue";
     // r.fillRect(0, 0, w, h);
 
+    drawGameBorder();
     drawNums();
+    drawMults();
+    drawTarget();
+    drawCurrent();
+    drawTime();
 }

@@ -12,7 +12,10 @@ const segSize = 10;
 const segment = {
     width: segSize * 3, 
     height: segSize * 5, 
-    thick: Math.ceil(segSize * 0.9)
+    thick: Math.ceil(segSize * 0.9), 
+    borderMarginSide: 20, 
+    borderMarginVert: 30, 
+    borderThick: 1
 }
 
 const numToSegment = [
@@ -124,6 +127,42 @@ function init() {
     }
 }
 
+function segmentBorder(x, y) {
+    r.fillStyle = "white";
+
+    // top
+    r.fillRect(
+        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(segment.borderThick / 2), 
+        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(segment.borderThick / 2), 
+        segment.width + segment.borderMarginSide, 
+        segment.borderThick
+    );
+
+    // right
+    r.fillRect(
+        x + Math.floor(segment.width / 2) + Math.floor(segment.borderMarginSide / 2) - Math.floor(segment.borderThick / 2), 
+        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(segment.borderThick / 2), 
+        segment.borderThick,  
+        segment.height + segment.borderMarginVert + segment.borderThick
+    );
+
+    // bottom
+    r.fillRect(
+        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(segment.borderThick / 2), 
+        y + Math.floor(segment.height / 2) + Math.floor(segment.borderMarginVert / 2) - Math.floor(segment.borderThick / 2), 
+        segment.width + segment.borderMarginSide, 
+        segment.borderThick
+    );
+
+    // left
+    r.fillRect(
+        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(segment.borderThick / 2), 
+        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(segment.borderThick / 2), 
+        segment.borderThick,  
+        segment.height + segment.borderMarginVert
+    );
+}
+
 function segmentDisplay(digit, x, y) {
     r.fillStyle = "white";
     
@@ -143,11 +182,19 @@ function segmentDisplay(digit, x, y) {
 }
 
 function drawNums() {
-    segmentDisplay(8, margins.side, margins.leftRightVert);
+    let y = margins.leftRightVert;
+
+    for(let i = 0; i < numbers.length; i++) {
+        segmentBorder(margins.side, y);
+        segmentDisplay(numbers[i], margins.side, y);
+
+        y += segment.height + 75;
+    }
 }
 
 function loop() {
-    r.fillStyle = "slateblue";
-    r.fillRect(0, 0, w, h);
+    // r.fillStyle = "slateblue";
+    // r.fillRect(0, 0, w, h);
+
     drawNums();
 }

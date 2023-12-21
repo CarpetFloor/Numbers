@@ -129,38 +129,39 @@ function init() {
     }
 }
 
-function segmentBorder(x, y) {
-    r.fillStyle = "white";
+function segmentBorder(highlight, x, y) {
+    r.fillStyle = highlight ? "yellow" : "white";
+    let thick = highlight ? segment.borderThick * 2 : segment.borderThick;
 
     // top
     r.fillRect(
-        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(segment.borderThick / 2), 
-        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(segment.borderThick / 2), 
+        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(thick / 2), 
+        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(thick / 2), 
         segment.width + segment.borderMarginSide, 
-        segment.borderThick
+        thick
     );
 
     // right
     r.fillRect(
-        x + Math.floor(segment.width / 2) + Math.floor(segment.borderMarginSide / 2) - Math.floor(segment.borderThick / 2), 
-        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(segment.borderThick / 2), 
-        segment.borderThick,  
-        segment.height + segment.borderMarginVert + segment.borderThick
+        x + Math.floor(segment.width / 2) + Math.floor(segment.borderMarginSide / 2) - Math.floor(thick / 2), 
+        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(thick / 2), 
+        thick,  
+        segment.height + segment.borderMarginVert + thick
     );
 
     // bottom
     r.fillRect(
-        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(segment.borderThick / 2), 
-        y + Math.floor(segment.height / 2) + Math.floor(segment.borderMarginVert / 2) - Math.floor(segment.borderThick / 2), 
+        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(thick / 2), 
+        y + Math.floor(segment.height / 2) + Math.floor(segment.borderMarginVert / 2) - Math.floor(thick / 2), 
         segment.width + segment.borderMarginSide, 
-        segment.borderThick
+        thick
     );
 
     // left
     r.fillRect(
-        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(segment.borderThick / 2), 
-        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(segment.borderThick / 2), 
-        segment.borderThick,  
+        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(thick / 2), 
+        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(thick / 2), 
+        thick,  
         segment.height + segment.borderMarginVert
     );
 }
@@ -187,7 +188,7 @@ function drawNums() {
     let y = margins.leftRightVert;
 
     for(let i = 0; i < numbers.length; i++) {
-        segmentBorder(margins.side, y);
+        segmentBorder((i == 0), margins.side, y);
         segmentDisplay(numbers[i], margins.side, y);
 
         y += segment.height + 75;

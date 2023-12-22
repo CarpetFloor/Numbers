@@ -1,4 +1,13 @@
-// make sure to add time limit, and make it changeable
+/**
+ * TODO:
+ * -Basic game rendering:
+ *  >mults
+ *  >mult borders
+ *  >game border
+ *  >current
+ *  >game border
+ *  >make seven segment display look better 
+ */
 
 let c, r, w, h;
 
@@ -10,11 +19,13 @@ const margins = {
     side: 50
 }
 
-const segSize = 10;
+// vertical spacing between stuff
+const leftRightSpacing = 75;
+const segSize = 12;
 const segment = {
     width: segSize * 3, 
     height: segSize * 5, 
-    thick: Math.ceil(segSize * 0.9), 
+    thick: Math.ceil(segSize * 0.5), 
     borderMarginSide: 20, 
     borderMarginVert: 30, 
     borderThick: 1
@@ -145,9 +156,13 @@ function drawTarget() {
 
     // add leading zeros
     let totalString = total.toString();
-    for(let i = 0; i < 3 - totalString.length; i++) {
-        let temp = totalString;
-        totalString = "0" + temp;
+    let temp = totalString;
+    switch (totalString.length) {
+        case 1:
+            totalString = "00" + temp;
+            break;
+        case 2:
+            totalString = "0" + temp;
     }
 
     for(let i = 0; i < 3; i++) {
@@ -225,7 +240,129 @@ function drawNums() {
         segmentBorder((i == 0), margins.side, y);
         segmentDisplay(numbers[i], margins.side, y);
 
-        y += segment.height + 75;
+        y += segment.height + leftRightSpacing;
+    }
+}
+
+function multBorder(x, y) {
+    r.strokeStyle = "white";
+    r.lineWidth = segment.borderThick;
+    
+    r.beginPath();
+    r.arc(x, y, 
+        segment.width, 
+        0, 2 * Math.PI);
+    r.stroke();
+    r.closePath();
+}
+
+function drawMults() {
+    mults = [1, 2, 10];
+    let x = w - margins.side;
+    let marg = segment.borderThick * 5;
+    let y = margins.leftRightVert;
+
+    for(let i = 0; i < mults.length; i++) {
+        multBorder(x, y);
+        r.lineWidth = segment.thick;
+        
+        switch(mults[i]) {
+            case 1:
+                r.beginPath();
+                r.moveTo(
+                    x - (half(half(segment.height)) * 0.75), 
+                    y - half(half(segment.height))
+                );
+                
+                r.lineTo(
+                    x + (half(half(segment.height)) * 0.75), 
+                    y - half(half(segment.height))
+                );
+
+                r.lineTo(
+                    x + (half(half(segment.height)) * 0.75), 
+                    y + half(half(segment.height))
+                );
+
+                r.lineTo(
+                    x - (half(half(segment.height)) * 0.75), 
+                    y + half(half(segment.height))
+                );
+
+                r.lineTo(
+                    x - (half(half(segment.height)) * 0.75), 
+                    y - (half(half(segment.height)) * 1.2)
+                );
+                
+                r.stroke();
+                r.closePath();
+
+                // |
+                r.fillRect(
+                    x - half(segment.thick), 
+                    y - half(segment.height) + half(segment.thick), 
+                    segment.thick, 
+                    segment.height - segment.thick
+                );
+                break;
+            case 2:
+                // horizontal line
+                r.beginPath();
+                r.moveTo(
+                    x - half(segment.width) - marg, 
+                    y
+                );
+                r.lineTo(
+                    x + half(segment.width) + marg,
+                    y
+                )
+                r.stroke();
+                r.closePath();
+
+                // \\
+                for(let i = 0; i < 2; i++) {
+                    let space = segment.thick * 2.5;
+
+                    r.beginPath();
+                    r.moveTo(
+                        x - half(segment.width) + (segment.width * 0.12) + (i * space) - marg, 
+                        y - (segment.width * 0.4)
+                    );
+                    r.lineTo(
+                        x + half(segment.width) - (segment.width * (0.12 * 3)) + (i * space), 
+                        y + (segment.width * 0.4)
+                    )
+                    r.stroke();
+                    r.closePath();
+                }
+                break;
+            case 10:
+                let pos = Math.floor(segment.width * 0.75);
+                marg = segment.borderThick * 8;
+                // \
+                r.beginPath();
+                r.moveTo(
+                    x - pos + marg, 
+                    y - half(segment.height) + marg);
+                r.lineTo(
+                    x + pos - marg, 
+                    y + half(segment.height) - marg);
+                r.stroke();
+                r.closePath();
+
+                r.beginPath();
+                r.moveTo(
+                    x + pos - marg, 
+                    y - half(segment.height) + marg);
+                r.lineTo(
+                    x - pos + marg, 
+                    y + half(segment.height) - marg);
+                r.stroke();
+                r.closePath();
+                break;
+        }
+
+        y += segment.height + leftRightSpacing;
     }
 }
 
@@ -236,7 +373,7 @@ function loop() {
     // drawGameBorder();
     drawTarget();
     drawNums();
-    // drawMults();
+    drawMults();
     // drawCurrent();
     // drawTime();
 }

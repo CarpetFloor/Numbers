@@ -5,3 +5,6 @@ div {
     display: flex;
     justify-content: center;
 }
+canvas {
+    margin-top: 25px;
+}

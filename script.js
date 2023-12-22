@@ -4,10 +4,10 @@ let c, r, w, h;
 
 const margins = {
     // for target and results
-    middleVert: 20, 
+    middleVert: 60, 
     // for nums and mults
-    leftRightVert: 75, 
-    side: 30
+    leftRightVert: 150, 
+    side: 50
 }
 
 const segSize = 10;
@@ -36,54 +36,58 @@ const numToSegment = [
     [1, 1, 1, 1, 0, 1, 1]
 ]
 
+function half(num) {
+    return Math.floor(num / 2);
+}
+
 // offsets
 const segmentsLocations = [
     // a
     [
-        0 - Math.floor(segment.width / 2), 
-        0 - Math.floor(segment.height / 2), 
+        0 - half(segment.width), 
+        0 - half(segment.height), 
         segment.width, 
         segment.thick
     ], 
     // b
     [
         0 + Math.ceil(segment.width / 2) - segment.thick, 
-        0 - Math.floor(segment.height / 2), 
+        0 - half(segment.height), 
         segment.thick, 
-        Math.floor(segment.height / 2)
+        half(segment.height)
     ], 
     // c
     [
         0 + Math.ceil(segment.width / 2) - segment.thick, 
         0, 
         segment.thick, 
-        Math.floor(segment.height / 2)
+        half(segment.height)
     ], 
     // d
     [
-        0 - Math.floor(segment.width / 2), 
-        0 + Math.floor(segment.height / 2) - segment.thick, 
+        0 - half(segment.width), 
+        0 + half(segment.height) - segment.thick, 
         segment.width, 
         segment.thick
     ], 
     // e
     [
-        0 - Math.floor(segment.width / 2),
+        0 - half(segment.width),
         0, 
         segment.thick, 
-        Math.floor(segment.height / 2)
+        half(segment.height)
     ], 
     // f
     [
-        0 - Math.floor(segment.width / 2), 
-        0 - Math.floor(segment.height / 2),
+        0 - half(segment.width), 
+        0 - half(segment.height),
         segment.thick, 
-        Math.floor(segment.height / 2)
+        half(segment.height)
     ], 
     // g
     [
-        0 - Math.floor(segment.width / 2), 
-        0 - Math.floor(segment.thick / 2), 
+        0 - half(segment.width), 
+        0 - half(segment.thick), 
         segment.width, 
         segment.thick
     ]
@@ -100,7 +104,7 @@ window.onload = function() {
     r = c.getContext("2d");
 
     c.width = 700;
-    c.height = 450;
+    c.height = 575;
 
     w = c.width;
     h = c.height;
@@ -129,38 +133,68 @@ function init() {
     }
 }
 
+function drawGameBorder() {
+    //
+};
+
+function drawTarget() {
+    r.font = "17px Arial";
+    let spacing = segment.borderMarginSide;
+
+    let x = half(w) - half(((segment.width + spacing) * 3));
+
+    // add leading zeros
+    let totalString = total.toString();
+    for(let i = 0; i < 3 - totalString.length; i++) {
+        let temp = totalString;
+        totalString = "0" + temp;
+    }
+
+    for(let i = 0; i < 3; i++) {
+        segmentBorder(false, x, margins.middleVert);
+        segmentDisplay(totalString[i], x, margins.middleVert);
+
+        // draw "target" text in middle digit
+        if(i == 1) {
+            r.fillText("TARGET", x - (segment.width), margins.middleVert - half((segment.height)) - 17);
+        }
+
+        x += segment.width + spacing;
+    }
+}
+
 function segmentBorder(highlight, x, y) {
     r.fillStyle = highlight ? "yellow" : "white";
-    let thick = highlight ? segment.borderThick * 2 : segment.borderThick;
+    let thick = highlight ? segment.borderThick * 3 : segment.borderThick;
 
     // top
     r.fillRect(
-        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(thick / 2), 
-        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(thick / 2), 
+        x - half(segment.width) - half(segment.borderMarginSide) - half(thick), 
+        y - half(segment.height) - half(segment.borderMarginVert) - half(thick), 
         segment.width + segment.borderMarginSide, 
         thick
     );
 
     // right
     r.fillRect(
-        x + Math.floor(segment.width / 2) + Math.floor(segment.borderMarginSide / 2) - Math.floor(thick / 2), 
-        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(thick / 2), 
+        x + half(segment.width) + half(segment.borderMarginSide) - half(thick), 
+        y - half(segment.height) - half(segment.borderMarginVert) - half(thick), 
         thick,  
         segment.height + segment.borderMarginVert + thick
     );
 
     // bottom
     r.fillRect(
-        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(thick / 2), 
-        y + Math.floor(segment.height / 2) + Math.floor(segment.borderMarginVert / 2) - Math.floor(thick / 2), 
+        x - half(segment.width) - half(segment.borderMarginSide) - half(thick), 
+        y + half(segment.height) + half(segment.borderMarginVert) - half(thick), 
         segment.width + segment.borderMarginSide, 
         thick
     );
 
     // left
     r.fillRect(
-        x - Math.floor(segment.width / 2) - Math.floor(segment.borderMarginSide / 2) - Math.floor(thick / 2), 
-        y - Math.floor(segment.height / 2) - Math.floor(segment.borderMarginVert / 2) - Math.floor(thick / 2), 
+        x - half(segment.width) - half(segment.borderMarginSide) - half(thick), 
+        y - half(segment.height) - half(segment.borderMarginVert) - half(thick), 
         thick,  
         segment.height + segment.borderMarginVert
     );
@@ -196,13 +230,13 @@ function drawNums() {
 }
 
 function loop() {
-    // r.fillStyle = "slateblue";
-    // r.fillRect(0, 0, w, h);
+    r.fillStyle = "slateblue";
+    r.fillRect(0, 0, w, h);
 
-    drawGameBorder();
-    drawNums();
-    drawMults();
+    // drawGameBorder();
     drawTarget();
-    drawCurrent();
-    drawTime();
+    drawNums();
+    // drawMults();
+    // drawCurrent();
+    // drawTime();
 }

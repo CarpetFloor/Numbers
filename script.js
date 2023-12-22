@@ -149,7 +149,8 @@ function drawGameBorder() {
 };
 
 function drawTarget() {
-    r.font = "17px Arial";
+    let fontSize = 14;
+    r.font = fontSize + "px Arial";
     let spacing = segment.borderMarginSide;
 
     let x = half(w) - half(((segment.width + spacing) * 3));
@@ -171,7 +172,8 @@ function drawTarget() {
 
         // draw "target" text in middle digit
         if(i == 1) {
-            r.fillText("TARGET", x - (segment.width), margins.middleVert - half((segment.height)) - 17);
+            let offset = (r.measureText("TARGET").width) / 2;
+            r.fillText("TARGET", x - offset, margins.middleVert - half((segment.height)) - segment.borderThick - fontSize - 2);
         }
 
         x += segment.width + spacing;

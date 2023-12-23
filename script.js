@@ -30,6 +30,7 @@ const segment = {
     borderMarginVert: 30, 
     borderThick: 1
 }
+const fontSize = 14;
 
 const numToSegment = [
     // starting from top, goes clock-wise, 
@@ -149,7 +150,6 @@ function drawGameBorder() {
 };
 
 function drawTarget() {
-    let fontSize = 14;
     r.font = fontSize + "px Arial";
     let spacing = segment.borderMarginSide;
 
@@ -173,7 +173,10 @@ function drawTarget() {
         // draw "target" text in middle digit
         if(i == 1) {
             let offset = (r.measureText("TARGET").width) / 2;
-            r.fillText("TARGET", x - offset, margins.middleVert - half((segment.height)) - segment.borderThick - fontSize - 2);
+            r.fillText(
+                "TARGET", 
+                x - offset, 
+                margins.middleVert - half((segment.height)) - segment.borderThick - fontSize - 2);
         }
 
         x += segment.width + spacing;
@@ -182,7 +185,7 @@ function drawTarget() {
 
 function segmentBorder(highlight, x, y) {
     r.fillStyle = highlight ? "yellow" : "white";
-    let thick = highlight ? segment.borderThick * 3 : segment.borderThick;
+    let thick = highlight ? segment.borderThick * 4 : segment.borderThick;
 
     // top
     r.fillRect(
@@ -368,6 +371,41 @@ function drawMults() {
     }
 }
 
+function drawCurrent() {
+    r.font = fontSize + "px Arial";
+    let spacing = segment.borderMarginSide;
+
+    let x = half(w) - half((segment.width * 3));
+    let yOffset = 2;
+
+    // add leading zeros
+    let currentString = current.toString();
+    let temp = currentString;
+    switch (currentString.length) {
+        case 1:
+            currentString = "00" + temp;
+            break;
+        case 2:
+            currentString = "0" + temp;
+    }
+
+    for(let i = 0; i < 3; i++) {
+        segmentBorder(false, x, h - margins.middleVert - yOffset);
+        segmentDisplay(currentString[i], x, h - margins.middleVert - yOffset);
+
+        // draw "target" text in middle digit
+        if(i == 1) {
+            let offset = (r.measureText("TARGET").width) / 2;
+            r.fillText(
+                "RESULT", 
+                x - offset, 
+                h - margins.middleVert + segment.height - yOffset);
+        }
+
+        x += segment.width + spacing;
+    }
+}
+
 function loop() {
     r.fillStyle = "slateblue";
     r.fillRect(0, 0, w, h);
@@ -376,6 +414,6 @@ function loop() {
     drawTarget();
     drawNums();
     drawMults();
-    // drawCurrent();
+    drawCurrent();
     // drawTime();
 }

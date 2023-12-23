@@ -1,10 +1,6 @@
 /**
  * TODO:
  * -Basic game rendering:
- *  >mults
- *  >mult borders
- *  >game border
- *  >current
  *  >game border
  *  >make seven segment display look better 
  */
@@ -172,11 +168,12 @@ function drawTarget() {
 
     for(let i = 0; i < 3; i++) {
         segmentBorder(false, x, margins.middleVert);
-        r.fillStyle = "crimson";
+        r.fillStyle = "tomato";
         segmentDisplay(totalString[i], x, margins.middleVert);
 
         // draw "target" text in middle digit
         if(i == 1) {
+            r.fillStyle = "tomato";
             let offset = (r.measureText("TARGET").width) / 2;
             r.fillText(
                 "TARGET", 

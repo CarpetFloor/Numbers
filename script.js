@@ -31,6 +31,10 @@ const segment = {
     borderThick: 1
 }
 const fontSize = 14;
+const secondsPerSection = 5;
+// in seconds
+let time = 30;
+let timeLeft = time;
 
 const numToSegment = [
     // starting from top, goes clock-wise, 
@@ -406,6 +410,58 @@ function drawCurrent() {
     }
 }
 
+function drawTime() {
+    r.strokeStyle = "white";
+    let thick = segment.borderThick;
+    r.lineWidth = thick;
+
+    let width = Math.floor(segment.width * 2.5);
+    let height = Math.floor(segment.height * 0.5);
+    let spacing = 5;
+    let totalSections = Math.floor(time / secondsPerSection);
+    let count = Math.ceil(timeLeft / secondsPerSection);
+    let sectionWidth = Math.floor(width / ((time / secondsPerSection))) - spacing - (spacing / totalSections);
+
+    let x = margins.side + segment.width + segment.borderMarginSide;
+    let y = h - segment.height - half(height);
+
+    r.fillStyle = "white";
+    // top
+    r.fillRect(
+        x, y, 
+        width, thick
+    );
+
+    // right
+    r.fillRect(
+        x + width - thick, y, 
+        thick, height
+    );
+
+    // down
+    r.fillRect(
+        x, y + height, 
+        width, thick
+    );
+
+    // left
+    r.fillRect(
+        x, y, 
+        thick, height
+    );
+
+    r.fillStyle = "springgreen";
+    // bar sections
+    for(let i = 0; i < count; i++) {
+        r.fillRect(
+            x + spacing, y + spacing, 
+            sectionWidth, height - (spacing * 2)
+        );
+
+        x += sectionWidth + spacing;
+    }
+}
+
 function loop() {
     r.fillStyle = "slateblue";
     r.fillRect(0, 0, w, h);
@@ -415,5 +471,5 @@ function loop() {
     drawNums();
     drawMults();
     drawCurrent();
-    // drawTime();
+    drawTime();
 }

@@ -153,7 +153,7 @@ function drawTarget() {
     r.font = fontSize + "px Arial";
     let spacing = segment.borderMarginSide;
 
-    let x = half(w) - half(((segment.width + spacing) * 3));
+    let x = half(w) - half((segment.width * 3));
 
     // add leading zeros
     let totalString = total.toString();

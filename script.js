@@ -172,6 +172,7 @@ function drawTarget() {
 
     for(let i = 0; i < 3; i++) {
         segmentBorder(false, x, margins.middleVert);
+        r.fillStyle = "crimson";
         segmentDisplay(totalString[i], x, margins.middleVert);
 
         // draw "target" text in middle digit
@@ -180,7 +181,7 @@ function drawTarget() {
             r.fillText(
                 "TARGET", 
                 x - offset, 
-                margins.middleVert - half((segment.height)) - segment.borderThick - fontSize - 2);
+                margins.middleVert - half((segment.height)) - segment.borderThick - fontSize - 3);
         }
 
         x += segment.width + spacing;
@@ -189,7 +190,7 @@ function drawTarget() {
 
 function segmentBorder(highlight, x, y) {
     r.fillStyle = highlight ? "yellow" : "white";
-    let thick = highlight ? segment.borderThick * 4 : segment.borderThick;
+    let thick = highlight ? segment.borderThick * 3 : segment.borderThick;
 
     // top
     r.fillRect(
@@ -225,8 +226,6 @@ function segmentBorder(highlight, x, y) {
 }
 
 function segmentDisplay(digit, x, y) {
-    r.fillStyle = "white";
-    
     for(let i = 0; i < numToSegment[0].length; i++) {
         let from = {
             x: segmentsLocations[i][0] * numToSegment[digit][i], 
@@ -244,11 +243,12 @@ function segmentDisplay(digit, x, y) {
 
 function drawNums() {
     let y = margins.leftRightVert;
-
+    
     for(let i = 0; i < numbers.length; i++) {
         segmentBorder((i == 0), margins.side, y);
+        r.fillStyle = "white";
         segmentDisplay(numbers[i], margins.side, y);
-
+        
         y += segment.height + leftRightSpacing;
     }
 }
@@ -395,6 +395,7 @@ function drawCurrent() {
 
     for(let i = 0; i < 3; i++) {
         segmentBorder(false, x, h - margins.middleVert - yOffset);
+        r.fillStyle = "white";
         segmentDisplay(currentString[i], x, h - margins.middleVert - yOffset);
 
         // draw "target" text in middle digit

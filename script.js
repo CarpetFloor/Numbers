@@ -1,10 +1,3 @@
-/**
- * TODO:
- * -Basic game rendering:
- *  >game border
- *  >make seven segment display look better 
- */
-
 let c, r, w, h;
 
 const margins = {

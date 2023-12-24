@@ -146,7 +146,51 @@ function init() {
 }
 
 function drawGameBorder() {
-    //
+    r.fillStyle = "white";
+    // on all sides
+    let margin = 5;
+    let thick = segment.borderThick;
+    // left
+    r.fillRect(
+        margin + half(thick), 
+        margins.middleVert + half(thick), 
+        thick, 
+        h - (margin * 2) - segment.height - margins.middleVert
+    );
+
+    // top left
+    r.fillRect(
+        margin + half(thick), 
+        margins.middleVert + half(thick), 
+        half(w - (margin * 2)) - half((segment.width + segment.borderMarginSide) * 3), 
+        thick
+    );
+
+    // top right
+    r.fillRect(
+        half(w - (margin * 2)) + half((segment.width + segment.borderMarginSide) * 3) + half(segment.borderMarginSide), 
+        margins.middleVert + half(thick), 
+        half(w - (margin * 2)) - half((segment.width + segment.borderMarginSide) * 3) - half(half(segment.borderMarginSide)), 
+        thick
+    );
+
+    let startingY = margins.middleVert + half(thick);
+    let endingY = h - margins.middleVert + half(thick);
+    // right
+    r.fillRect(
+        w - margin - half(thick), 
+        startingY, 
+        thick, 
+        endingY - startingY
+    );
+
+    // bottom right
+    r.fillRect(
+        half(w - (margin * 2)) + half((segment.width + segment.borderMarginSide) * 3) + half(segment.borderMarginSide), 
+        h - margins.middleVert + half(thick), 
+        half(w - (margin * 2)) - half((segment.width + segment.borderMarginSide) * 3) - half(half(segment.borderMarginSide)), 
+        thick
+    );
 };
 
 function drawTarget() {
@@ -464,7 +508,7 @@ function loop() {
     r.fillStyle = "slateblue";
     r.fillRect(0, 0, w, h);
 
-    // drawGameBorder();
+    drawGameBorder();
     drawTarget();
     drawNums();
     drawMults();

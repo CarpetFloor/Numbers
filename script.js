@@ -111,6 +111,9 @@ let mults = [];
 let total = 0;
 let current = 0;
 
+const timeWidth = Math.floor(segment.width * 2.5);
+const timeHeight = Math.floor(segment.height * 0.5);
+
 window.onload = function() {
     c = document.querySelector("canvas");
     r = c.getContext("2d");
@@ -150,13 +153,29 @@ function drawGameBorder() {
     // on all sides
     let margin = 5;
     let thick = segment.borderThick;
+    // for bottom left
+    const squareSize = Math.floor(segment.width / 5);
+    // for inside of numbers and mults
+    const circleSize = Math.floor(squareSize * 0.7);
     // left
     r.fillRect(
         margin + half(thick), 
         margins.middleVert + half(thick), 
         thick, 
-        h - (margin * 2) - segment.height - margins.middleVert
+        h - Math.floor((segment.height + margins.middleVert) * 1.15)
     );
+    
+    let x = margin + half(thick);
+    let startY = margins.middleVert + half(thick);
+    let y = startY + h - Math.floor((segment.height + margins.middleVert) * 1.15);
+    // circle on bottom-left
+    r.arc(
+        x, y, 
+        circleSize, 
+        0, 
+        2 * Math.PI
+    );
+    r.fill();
 
     // top left
     r.fillRect(
@@ -191,6 +210,117 @@ function drawGameBorder() {
         half(w - (margin * 2)) - half((segment.width + segment.borderMarginSide) * 3) - half(half(segment.borderMarginSide)), 
         thick
     );
+
+    // bottom left inside
+    let startX = half(w - (margin * 2)) - half((segment.width + segment.borderMarginSide) * 3) + half(half(segment.borderMarginSide));
+    let endX = margins.side + segment.width + segment.borderMarginSide + timeWidth + segment.borderThick;
+    r.fillRect(
+        startX, 
+        h - margins.middleVert + half(thick), 
+        endX - startX, 
+        thick
+    );
+
+    // bottom left outside
+    let bottomLeftScale = 7;
+    startX = margins.side + segment.width + segment.borderMarginSide - segment.borderThick;
+    r.fillRect(
+        startX, 
+        h - margins.middleVert + half(thick), 
+        -Math.floor(timeWidth / bottomLeftScale), 
+        thick
+    );
+    
+    // three lines of ascending height to the left of time
+    x = startX - Math.floor((timeWidth / bottomLeftScale));
+    y = h - margins.middleVert + half(thick);
+    let lineHeight = Math.floor(timeHeight / 4);
+    for(let i = 0; i < 3; i++) {
+        r.fillRect(
+            x, y - half(lineHeight), 
+            thick, lineHeight
+        );
+
+        x -= thick * 3;
+        lineHeight = Math.floor(lineHeight * 1.5);
+    }
+
+    // left horizontal lines
+    r.lineWidth = thick;
+    r.strokeStyle = "white";
+    y = margins.leftRightVert;
+    let width = half(margins.side) - margin - segment.borderThick - thick;
+    let vertSpacing = Math.floor(segment.height / 4);
+
+    for(let i = 0; i < numbers.length; i++) {
+        // outside on right side
+        r.fillRect(
+            w - margin, 
+            y, 
+            0 - half(width), 
+            thick
+        );
+
+        // inside on right side
+        r.fillRect(
+            w - margin - (segment.width * 2) - half(width) - segment.borderThick, 
+            y, 
+            0 - half(width), 
+            thick
+        );
+
+        let x = w - margin - (segment.width * 2) - half(width) - segment.borderThick- half(width);
+        // inside square on right side
+        r.strokeRect(
+            x - 0.5, 
+            y - half(squareSize) + 0.5, 
+            0 - squareSize, 
+            squareSize
+        );
+
+        // outside on middle on left side
+        r.fillRect(
+            margin, 
+            y, 
+            width, 
+            thick
+        );
+
+        // inside on left side
+        r.fillRect(
+            margin + (segment.width * 2) + segment.borderThick, 
+            y, 
+            width, 
+            thick
+        );
+
+        x = margin + (segment.width * 2) + segment.borderThick + width;
+        // inside square on left side
+        r.strokeRect(
+            x + 0.5, 
+            y - half(squareSize) + 0.5, 
+            squareSize, 
+            squareSize
+        );
+
+        // outside on line above middle on left side
+        r.fillRect(
+            margin, 
+            y + vertSpacing, 
+            width, 
+            thick
+        );
+
+        // outside on line below middle on left side
+        r.fillRect(
+            margin, 
+            y - vertSpacing, 
+            width, 
+            thick
+        );
+
+        y += segment.height + leftRightSpacing;
+    }
 };
 
 function drawTarget() {
@@ -301,7 +431,8 @@ function multBorder(x, y) {
     r.beginPath();
     r.arc(x, y, 
         segment.width, 
-        0, 2 * Math.PI);
+        0, 2 * Math.PI
+    );
     r.stroke();
     r.closePath();
 }
@@ -457,39 +588,37 @@ function drawTime() {
     let thick = segment.borderThick;
     r.lineWidth = thick;
 
-    let width = Math.floor(segment.width * 2.5);
-    let height = Math.floor(segment.height * 0.5);
     let spacing = 5;
     let totalSections = Math.floor(time / secondsPerSection);
     let count = Math.ceil(timeLeft / secondsPerSection);
-    let sectionWidth = Math.floor(width / ((time / secondsPerSection))) - spacing - (spacing / totalSections);
+    let sectionWidth = Math.floor(timeWidth / ((time / secondsPerSection))) - spacing - (spacing / totalSections);
 
     let x = margins.side + segment.width + segment.borderMarginSide;
-    let y = h - segment.height - half(height);
+    let y = h - segment.height - half(timeHeight);
 
     r.fillStyle = "white";
     // top
     r.fillRect(
         x, y, 
-        width, thick
+        timeWidth, thick
     );
 
     // right
     r.fillRect(
-        x + width - thick, y, 
-        thick, height
+        x + timeWidth - thick, y, 
+        thick, timeHeight
     );
 
     // down
     r.fillRect(
-        x, y + height, 
-        width, thick
+        x, y + timeHeight, 
+        timeWidth, thick
     );
 
     // left
     r.fillRect(
         x, y, 
-        thick, height
+        thick, timeHeight
     );
 
     r.fillStyle = "springgreen";
@@ -497,7 +626,7 @@ function drawTime() {
     for(let i = 0; i < count; i++) {
         r.fillRect(
             x + spacing, y + spacing, 
-            sectionWidth, height - (spacing * 2)
+            sectionWidth, timeHeight - (spacing * 2)
         );
 
         x += sectionWidth + spacing;
@@ -505,8 +634,8 @@ function drawTime() {
 }
 
 function loop() {
-    r.fillStyle = "slateblue";
-    r.fillRect(0, 0, w, h);
+    // r.fillStyle = "slateblue";
+    // r.fillRect(0, 0, w, h);
 
     drawGameBorder();
     drawTarget();

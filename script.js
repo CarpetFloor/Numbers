@@ -1,5 +1,6 @@
 /**
  * TODO:
+ * -Connections should make inside squares filled and colored
  * -End game when last number and mult cofirmed
  * -End game when time runs out
  * -Ability to change time

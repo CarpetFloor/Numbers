@@ -103,6 +103,7 @@ const multOptions = [1, 2, 10];
 let mults = [];
 let total = 0;
 let current = 0;
+let currentDisplay = 0;
 
 let pressListener;
 let releaseListener;
@@ -563,7 +564,7 @@ function drawCurrent() {
     let yOffset = 2;
 
     // add leading zeros
-    let currentString = current.toString();
+    let currentString = currentDisplay.toString();
     let temp = currentString;
     switch (currentString.length) {
         case 1:
@@ -686,6 +687,26 @@ function drawConnection() {
     }
 }
 
+function updateCurrent(goal) {
+    if(currentDisplay < goal) {
+        ++currentDisplay;
+        loop();
+
+        window.setTimeout(function() {
+            updateCurrent(goal);
+        }, 25);
+    }
+}
+
+function startCurrentUpdate() {
+    currentDisplay = current;
+    let value = numbers[connectionStartPos] * mults[pos];
+    
+    // what current would be based off of number and mult selected
+    let alternate = current + value;
+    updateCurrent(alternate);
+}
+
 function verticalMove(amount, key) {
     pressing = true;
     lastPressed = key;
@@ -700,6 +721,10 @@ function verticalMove(amount, key) {
     }
 
     loop();
+
+    if(onRight) {
+        startCurrentUpdate();
+    }
 }
 
 let pressing = false;
@@ -729,12 +754,11 @@ function press(e) {
                 onRight = !(onRight);
 
                 loop();
-                break;
-        }
 
-        if(pressing && onRight) {
-            loop();
-            drawConnection();
+                if(onRight) {
+                    startCurrentUpdate();
+                }
+                break;
         }
     }
 }
@@ -756,4 +780,8 @@ function loop() {
     drawMults();
     drawCurrent();
     drawTime();
+
+    if(onRight) {
+        drawConnection();
+    }
 }

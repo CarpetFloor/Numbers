@@ -715,14 +715,23 @@ function drawCompletedConnections() {
     }
 }
 
-function updateCurrent(goal) {
-    if(currentDisplay < goal) {
-        ++currentDisplay;
-        loop();
+let currentInterval;
+let alternate = -1;
 
-        window.setTimeout(function() {
-            updateCurrent(goal);
-        }, 25);
+function updateCurrent() {
+    console.log(currentDisplay, alternate)
+    if(currentDisplay != alternate) {
+        if(currentDisplay > alternate) {
+            --currentDisplay;
+        }
+        else {
+            ++currentDisplay;
+        }
+
+        loop();
+    }
+    else {
+        window.clearInterval(currentInterval);
     }
 }
 
@@ -731,8 +740,11 @@ function startCurrentUpdate() {
     let value = numbers[connectionStartPos] * mults[pos];
     
     // what current would be based off of number and mult selected
-    let alternate = current + value;
-    updateCurrent(alternate);
+    alternate = current + value;
+
+    window.clearInterval(currentInterval);
+
+    currentInterval = window.setInterval(updateCurrent, 25);
 }
 
 function verticalMove(amount, key) {
@@ -759,6 +771,8 @@ let completedConnections = [];
 
 // when a number and mult have been selected
 function confirmSelection() {
+    current += numbers[connectionStartPos] * mults[pos];
+
     completedConnections.push([connectionStartPos, pos]);
     pos = connectionStartPos;
 

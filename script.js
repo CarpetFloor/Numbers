@@ -1,3 +1,7 @@
+/**
+ * Note: No main game loop that runs at a set FPS because stuff only really needs to be rendered when a key pressed, other than the time happening, which only happens once a second.
+ */
+
 let c, r, w, h;
 
 const margins = {
@@ -107,6 +111,7 @@ let currentDisplay = 0;
 
 let pressListener;
 let releaseListener;
+let timeUpdateInterval;
 
 window.onload = function() {
     c = document.querySelector("canvas");
@@ -120,10 +125,13 @@ window.onload = function() {
 
     init();
     loop();
+
     pressListener = document.addEventListener("keydown", press);
     releaseListener = document.addEventListener("keyup", release);
+    timeUpdateInterval = window.setInterval(updateTime, 1000);
 }
 
+// generates numbers, mults, and target
 function init() {
     numbers = [];
     mults = [];
@@ -645,6 +653,20 @@ function drawTime() {
     }
 }
 
+let gameOver = false;
+
+function updateTime() {
+    --timeLeft;
+    loop();
+
+    if(timeLeft == 0) {
+        gameOver = true;
+        // window.setTimeout(function() {
+        //     window.alert("No time left");
+        // }, 50);
+    }
+}
+
 let connectionStartPos = -1;
 
 function drawConnection() {
@@ -771,8 +793,6 @@ function release(e) {
 
 function loop() {
     r.clearRect(0, 0, w, h);
-    // r.fillStyle = "slateblue";
-    // r.fillRect(0, 0, w, h);
 
     drawGameBorder();
     drawTarget();

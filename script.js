@@ -647,17 +647,43 @@ function drawTime() {
 let connectionStartPos = -1;
 
 function drawConnection() {
+    r.fillStyle = highlightColors[connectionStartPos];
+
     let thick = segment.borderThick;
     // from game border
     let widthRef = half(margins.side) - gameBorderMargin - segment.borderThick - thick;
     
     let x = gameBorderMargin + (segment.width * 2) + segment.borderThick + widthRef + gameBorderSquareSize + thick;
-    let y = margins.leftRightVert - half(thick);
-
     let endX = w - gameBorderMargin - (segment.width * 2) - half(widthRef) - segment.borderThick - half(widthRef) - gameBorderSquareSize;
+    let len = endX - x;
 
-    r.fillStyle = highlightColors[pos];
-    r.fillRect(x, y, endX - x, thick);
+    let baseY = margins.leftRightVert;
+    let levelY = segment.height + leftRightSpacing;
+    let fromY = baseY + (levelY * connectionStartPos);
+    let toY = baseY + (levelY * pos);
+
+    if(fromY == toY) {
+        r.fillRect(x, toY, len, thick);
+    }
+    else {
+        let segWidth = half(half(len));
+        let longerSegWidth = Math.floor(segWidth * 1.5);
+        let segHeight = half(toY - fromY)
+        // first horizontal
+        r.fillRect(x, fromY, longerSegWidth, thick);
+
+        // first vertical
+        r.fillRect(x + longerSegWidth, fromY, thick, segHeight);
+
+        // middle horizontal
+        r.fillRect(x + longerSegWidth, fromY + segHeight, segWidth, thick);
+
+        // secondVertical
+        r.fillRect(x + longerSegWidth + segWidth, fromY + segHeight, thick, segHeight);
+
+        // last horizontal
+        r.fillRect(x + longerSegWidth + segWidth, fromY + segHeight + segHeight, longerSegWidth, thick);
+    }
 }
 
 let pressing = false;
@@ -704,10 +730,12 @@ function press(e) {
                 }
                 onRight = !(onRight);
 
+                loop();
                 break;
         }
 
         if(pressing && onRight) {
+            loop();
             drawConnection();
         }
     }

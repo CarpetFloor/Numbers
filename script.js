@@ -719,7 +719,6 @@ let currentInterval;
 let alternate = -1;
 
 function updateCurrent() {
-    console.log(currentDisplay, alternate)
     if(currentDisplay != alternate) {
         if(currentDisplay > alternate) {
             --currentDisplay;
@@ -767,6 +766,29 @@ function verticalMove(amount, key) {
     }
 }
 
+// when confirming a number and movin to mults, find first avail
+function findAvailMult() {
+    let found = false;
+    
+    while(!(found)) {   
+        found = true;
+        for(let c of completedConnections) {
+            if(c[1] == pos) {
+                found = false;
+                break;
+            }
+        }
+
+        if(!(found)) {
+            ++pos;
+
+            if(pos > numbers.length - 1) {
+                pos = 0;
+            }
+        }
+    }
+}
+
 let completedConnections = [];
 
 // when a number and mult have been selected
@@ -780,6 +802,10 @@ function confirmSelection() {
     let found = false;
     while(!(found)) {
         ++pos;
+
+        if(pos > numbers.length - 1) {
+            pos = 0;
+        }
 
         found = true;
         for(let c of completedConnections) {
@@ -814,6 +840,7 @@ function press(e) {
                 
                 if(!(onRight)) {
                     connectionStartPos = pos;
+                    findAvailMult();
                 }
                 else {
                     confirmSelection();

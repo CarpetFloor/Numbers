@@ -753,9 +753,18 @@ function startCurrentUpdate() {
         }
     }
 
-    window.clearInterval(currentInterval);
+    // instantly update result if on last number
+    if(completedConnections.length == 2) {
+        window.clearInterval(currentInterval);
+        current = alternate;
+        currentDisplay = alternate;
+        loop();
+    }
+    else {
+        window.clearInterval(currentInterval);
 
-    currentInterval = window.setInterval(updateCurrent, 25);
+        currentInterval = window.setInterval(updateCurrent, 25);
+    }
 }
 
 function verticalMove(amount, key) {

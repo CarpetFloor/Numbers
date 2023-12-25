@@ -143,13 +143,16 @@ function init() {
     }
 }
 
+const gameBorderMargin = 5;
+const gameBorderSquareSize = Math.floor(segment.width / 5);
+
 function drawGameBorder() {
     r.fillStyle = "white";
     // on all sides
-    let margin = 5;
+    let margin = gameBorderMargin;
     let thick = segment.borderThick;
     // for bottom left
-    const squareSize = Math.floor(segment.width / 5);
+    const squareSize = gameBorderSquareSize;
     // for inside of numbers and mults
     const circleSize = Math.floor(squareSize * 0.7);
     // left
@@ -264,7 +267,7 @@ function drawGameBorder() {
             thick
         );
 
-        let x = w - margin - (segment.width * 2) - half(width) - segment.borderThick- half(width);
+        let x = w - margin - (segment.width * 2) - half(width) - segment.borderThick - half(width);
         // inside square on right side
         r.strokeRect(
             x - 0.5, 
@@ -633,9 +636,26 @@ function drawTime() {
     }
 }
 
+let connectionStartPos = -1;
+
+function drawConnection() {
+    let thick = segment.borderThick;
+    // from game border
+    let widthRef = half(margins.side) - gameBorderMargin - segment.borderThick - thick;
+    
+    let x = gameBorderMargin + (segment.width * 2) + segment.borderThick + widthRef + gameBorderSquareSize + thick;
+    let y = margins.leftRightVert - half(thick);
+
+    let endX = w - gameBorderMargin - (segment.width * 2) - half(widthRef) - segment.borderThick - half(widthRef) - gameBorderSquareSize;
+
+    r.fillStyle = highlightColors[pos];
+    r.fillRect(x, y, endX - x, thick);
+}
+
 let pressing = false;
 let lastPressed = "";
 let pos = 0;
+let onRight = false;
 
 function press(e) {
     if(!(pressing)) {
@@ -670,7 +690,14 @@ function press(e) {
             case " ":
                 pressing = true;
                 lastPressed = e.key;
+
+                onRight = !(onRight);
                 break;
+        }
+
+        if(pressing && onRight) {
+            connectionStartPos = pos;
+            drawConnection();
         }
     }
 }

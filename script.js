@@ -1,4 +1,13 @@
 /**
+ * TODO:
+ * -End game when last number and mult cofirmed
+ * -End game when time runs out
+ * -Ability to restart game
+ * -Change connections to minimze overlap between multiple connections
+ * -Make mobile friendly
+ */
+
+/**
  * Note: No main game loop that runs at a set FPS because stuff only really needs to be rendered when a key pressed, other than the time happening, which only happens once a second.
  */
 

@@ -669,8 +669,8 @@ function updateTime() {
 
 let connectionStartPos = -1;
 
-function drawConnection() {
-    r.fillStyle = highlightColors[connectionStartPos];
+function drawConnection(from, to) {
+    r.fillStyle = highlightColors[from];
 
     let thick = segment.borderThick;
     // from game border
@@ -682,8 +682,8 @@ function drawConnection() {
 
     let baseY = margins.leftRightVert;
     let levelY = segment.height + leftRightSpacing;
-    let fromY = baseY + (levelY * connectionStartPos);
-    let toY = baseY + (levelY * pos);
+    let fromY = baseY + (levelY * from);
+    let toY = baseY + (levelY * to);
 
     if(fromY == toY) {
         r.fillRect(x, toY, len, thick);
@@ -706,6 +706,12 @@ function drawConnection() {
 
         // last horizontal
         r.fillRect(x + longerSegWidth + segWidth, fromY + segHeight + segHeight, longerSegWidth, thick);
+    }
+}
+
+function drawCompletedConnections() {
+    for(let c of completedConnections) {
+        drawConnection(c[0], c[1]);
     }
 }
 
@@ -826,8 +832,9 @@ function loop() {
     drawMults();
     drawCurrent();
     drawTime();
+    drawCompletedConnections();
 
     if(onRight) {
-        drawConnection();
+        drawConnection(connectionStartPos, pos);
     }
 }

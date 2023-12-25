@@ -104,8 +104,8 @@ let mults = [];
 let total = 0;
 let current = 0;
 
-const timeWidth = Math.floor(segment.width * 2.5);
-const timeHeight = Math.floor(segment.height * 0.5);
+let pressListener;
+let releaseListener;
 
 window.onload = function() {
     c = document.querySelector("canvas");
@@ -119,6 +119,8 @@ window.onload = function() {
 
     init();
     loop();
+    pressListener = document.addEventListener("keydown", press);
+    releaseListener = document.addEventListener("keyup", release);
 }
 
 function init() {
@@ -352,8 +354,10 @@ function drawTarget() {
     }
 }
 
+const highlightColors = ["yellow", "red", "blue"];
+
 function segmentBorder(highlight, x, y) {
-    r.fillStyle = highlight ? "yellow" : "white";
+    r.fillStyle = highlight ? highlightColors[pos] : "white";
     let thick = highlight ? segment.borderThick * 3 : segment.borderThick;
 
     // top
@@ -409,7 +413,7 @@ function drawNums() {
     let y = margins.leftRightVert;
     
     for(let i = 0; i < numbers.length; i++) {
-        segmentBorder((i == 0), margins.side, y);
+        segmentBorder((i == pos), margins.side, y);
         r.fillStyle = "white";
         segmentDisplay(numbers[i], margins.side, y);
         
@@ -576,6 +580,9 @@ function drawCurrent() {
     }
 }
 
+const timeWidth = Math.floor(segment.width * 2.5);
+const timeHeight = Math.floor(segment.height * 0.5);
+
 function drawTime() {
     r.strokeStyle = "white";
     let thick = segment.borderThick;
@@ -626,7 +633,56 @@ function drawTime() {
     }
 }
 
+let pressing = false;
+let lastPressed = "";
+let pos = 0;
+
+function press(e) {
+    if(!(pressing)) {
+        switch(e.key) {
+            case "ArrowDown":
+                pressing = true;
+                lastPressed = e.key;
+
+                ++pos;
+    
+                if(pos > numbers.length - 1) {
+                    pos = 0;
+                }
+    
+                loop();
+                break;
+            
+            case "ArrowUp":
+                pressing = true;
+                lastPressed = e.key;
+
+                --pos;
+    
+                if(pos < 0) {
+                    pos = numbers.length - 1;
+                }
+    
+                loop();
+                break;
+            
+            case "Enter":
+            case " ":
+                pressing = true;
+                lastPressed = e.key;
+                break;
+        }
+    }
+}
+
+function release(e) {
+    if(e.key == lastPressed) {
+        pressing = false;
+    }
+}
+
 function loop() {
+    r.clearRect(0, 0, w, h);
     // r.fillStyle = "slateblue";
     // r.fillRect(0, 0, w, h);
 

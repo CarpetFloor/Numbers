@@ -564,6 +564,8 @@ function drawMults() {
     }
 }
 
+let currentColor = "white";
+
 function drawCurrent() {
     r.font = fontSize + "px Arial";
     let spacing = segment.borderMarginSide;
@@ -584,7 +586,7 @@ function drawCurrent() {
 
     for(let i = 0; i < 3; i++) {
         segmentBorder(false, x, h - margins.middleVert - yOffset);
-        r.fillStyle = "white";
+        r.fillStyle = currentColor;
         segmentDisplay(currentString[i], x, h - margins.middleVert - yOffset);
 
         // draw "target" text in middle digit
@@ -740,6 +742,16 @@ function startCurrentUpdate() {
     
     // what current would be based off of number and mult selected
     alternate = current + value;
+
+    // when on last number, update color of result to reflect if correct
+    if(completedConnections.length == 2) {
+        if(alternate == total) {
+            currentColor = "springgreen";
+        }
+        else {
+            currentColor = "tomato";
+        }
+    }
 
     window.clearInterval(currentInterval);
 

@@ -750,7 +750,32 @@ function verticalMove(amount, key) {
     pressing = true;
     lastPressed = key;
 
-    pos += amount;
+    // don't allow moving into a spot already in a connection
+    let found = false;
+
+    while(!(found)) {
+        if(!(found)) {
+            pos += amount;
+
+            if(pos < 0) {
+                pos = numbers.length - 1;
+            }
+            if(pos > numbers.length - 1) {
+                pos = 0;
+            }
+        }
+
+        found = true;
+
+        for(let c of completedConnections) {
+            let check = onRight ? 1 : 0;
+
+            if(c[check] == pos) {
+                found = false;
+                break;
+            }
+        }
+    }
 
     if(pos < 0) {
         pos = numbers.length - 1;
@@ -769,7 +794,7 @@ function verticalMove(amount, key) {
 // when confirming a number and movin to mults, find first avail
 function findAvailMult() {
     let found = false;
-    
+
     while(!(found)) {   
         found = true;
         for(let c of completedConnections) {

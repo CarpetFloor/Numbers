@@ -686,6 +686,22 @@ function drawConnection() {
     }
 }
 
+function verticalMove(amount, key) {
+    pressing = true;
+    lastPressed = key;
+
+    pos += amount;
+
+    if(pos < 0) {
+        pos = numbers.length - 1;
+    }
+    if(pos > numbers.length - 1) {
+        pos = 0;
+    }
+
+    loop();
+}
+
 let pressing = false;
 let lastPressed = "";
 let pos = 0;
@@ -695,29 +711,11 @@ function press(e) {
     if(!(pressing)) {
         switch(e.key) {
             case "ArrowDown":
-                pressing = true;
-                lastPressed = e.key;
-
-                ++pos;
-    
-                if(pos > numbers.length - 1) {
-                    pos = 0;
-                }
-    
-                loop();
+                verticalMove(1, e.key);
                 break;
             
             case "ArrowUp":
-                pressing = true;
-                lastPressed = e.key;
-
-                --pos;
-    
-                if(pos < 0) {
-                    pos = numbers.length - 1;
-                }
-    
-                loop();
+                verticalMove(-1, e.key);
                 break;
             
             case "Enter":

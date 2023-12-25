@@ -455,7 +455,6 @@ function multBorder(x, y) {
 }
 
 function drawMults() {
-    mults = [1, 2, 10];
     let x = w - margins.side;
     let marg = segment.borderThick * 5;
     let y = margins.leftRightVert;

@@ -360,7 +360,7 @@ function drawTarget() {
 const highlightColors = ["yellow", "red", "blue"];
 
 function segmentBorder(highlight, x, y) {
-    r.fillStyle = highlight ? highlightColors[pos] : "white";
+    r.fillStyle = highlight ? highlightColors[highlightCheck] : "white";
     let thick = highlight ? segment.borderThick * 3 : segment.borderThick;
 
     // top
@@ -412,11 +412,19 @@ function segmentDisplay(digit, x, y) {
     }
 }
 
+let checkI = -1;
+let highlightCheck = -1;
+
 function drawNums() {
     let y = margins.leftRightVert;
+
+    highlightCheck = pos;
+    if(onRight) {
+        highlightCheck = connectionStartPos;
+    }
     
     for(let i = 0; i < numbers.length; i++) {
-        segmentBorder((i == pos), margins.side, y);
+        segmentBorder((i == highlightCheck), margins.side, y);
         r.fillStyle = "white";
         segmentDisplay(numbers[i], margins.side, y);
         
@@ -690,13 +698,16 @@ function press(e) {
             case " ":
                 pressing = true;
                 lastPressed = e.key;
-
+                
+                if(!(onRight)) {
+                    connectionStartPos = pos;
+                }
                 onRight = !(onRight);
+
                 break;
         }
 
         if(pressing && onRight) {
-            connectionStartPos = pos;
             drawConnection();
         }
     }

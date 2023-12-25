@@ -2,6 +2,7 @@
  * TODO:
  * -End game when last number and mult cofirmed
  * -End game when time runs out
+ * -Ability to change time
  * -Ability to restart game
  * -Change connections to minimze overlap between multiple connections
  * -Make mobile friendly

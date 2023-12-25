@@ -749,6 +749,28 @@ function verticalMove(amount, key) {
     }
 }
 
+let completedConnections = [];
+
+// when a number and mult have been selected
+function confirmSelection() {
+    completedConnections.push([connectionStartPos, pos]);
+    pos = connectionStartPos;
+
+    // find next below number
+    let found = false;
+    while(!(found)) {
+        ++pos;
+
+        found = true;
+        for(let c of completedConnections) {
+            if(c[0] == pos) {
+                found = false;
+                break;
+            }
+        }
+    }
+}
+
 let pressing = false;
 let lastPressed = "";
 let pos = 0;
@@ -773,6 +795,10 @@ function press(e) {
                 if(!(onRight)) {
                     connectionStartPos = pos;
                 }
+                else {
+                    confirmSelection();
+                }
+
                 onRight = !(onRight);
 
                 loop();

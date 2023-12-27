@@ -155,7 +155,19 @@ function init() {
     // generate numbers and multipliers
     for(let i = 0; i < 3; i++) {
         numbers.push(Math.floor(Math.random() * (9 - 1) + 1));
-        mults.push(multOptions[Math.floor(Math.random() * multOptions.length)]);
+
+        let multChoice = Math.floor(Math.random() * multOptions.length);
+
+        // make sure all mults aren't the same
+        if((mults[0] == multOptions[multChoice]) ** (mults[1] == multOptions[multChoice])) {
+            ++multChoice;
+
+            if(multChoice > multOptions.length - 1) {
+                multChoice = 0;
+            }
+        }
+
+        mults.push(multOptions[multChoice]);
     }
 
     let avail = [
@@ -166,10 +178,10 @@ function init() {
     // calculate
     for(let i = 0; i < numbers.length; i++) {
         let numMax = avail[0].length - 1;
-        let numI = Math.floor(Math.random() * (numMax - 0) + 0);
+        let numI = Math.floor(Math.random() * numMax);
 
         let multMax = avail[1].length - 1;
-        let multI = Math.floor(Math.random() * (multMax - 0) + 0);
+        let multI = Math.floor(Math.random() * multMax);
         
         total += avail[0][numI] * avail[1][multI];
         

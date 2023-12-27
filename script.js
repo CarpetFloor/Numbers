@@ -871,13 +871,24 @@ let gameOver = false;
 
 // when a number and mult have been selected
 function confirmSelection() {
-    current += numbers[connectionStartPos] * mults[pos];
-
     completedConnections.push([connectionStartPos, pos]);
+
+    // calculate current, sometimes gets off, so can't just increase
+    current = 0;
+    for(let c of completedConnections) {
+        current += numbers[c[0]] * mults[c[1]];
+    }
     
+    console.log(current, total)
     if(completedConnections.length == 3) {
         gameOver = true;
-        endGame("test");
+
+        if(current == total) {
+            endGame("Correct Input");
+        }
+        else {
+            endGame("Incorrect Input");
+        }
     }
     else {
         pos = connectionStartPos;

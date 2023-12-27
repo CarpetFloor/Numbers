@@ -736,7 +736,7 @@ function updateTime() {
 
 let connectionStartPos = -1;
 
-function drawConnection(from, to) {
+function drawConnection(from, to, index) {
     r.fillStyle = highlightColors[from];
 
     let thick = segment.borderThick;
@@ -758,21 +758,36 @@ function drawConnection(from, to) {
     else {
         let segWidth = half(half(len));
         let longerSegWidth = Math.floor(segWidth * 1.5);
-        let segHeight = half(toY - fromY)
+        let segHeight = half(toY - fromY);
+
+        // horizontal offset from center where diagonal should start
+        let offset = 0;
+        switch(index) {
+            case 0:
+                offset = 0 - Math.floor(segWidth * 0.7);
+                break;
+            case 1:
+                offset = 0;
+                break;
+            case 2:
+                offset = Math.floor(segWidth * 0.7);
+                break;
+        }
+
         // first horizontal
-        r.fillRect(x, fromY, longerSegWidth, thick);
+        r.fillRect(x, fromY,offset + longerSegWidth, thick);
 
         // first vertical
-        r.fillRect(x + longerSegWidth, fromY, thick, segHeight);
+        r.fillRect(offset + x + longerSegWidth, fromY, thick, segHeight);
 
         // middle horizontal
-        r.fillRect(x + longerSegWidth, fromY + segHeight, segWidth, thick);
+        r.fillRect(offset + x + longerSegWidth, fromY + segHeight, segWidth, thick);
 
         // secondVertical
-        r.fillRect(x + longerSegWidth + segWidth, fromY + segHeight, thick, segHeight);
+        r.fillRect(offset + x + longerSegWidth + segWidth, fromY + segHeight, thick, segHeight);
 
         // last horizontal
-        r.fillRect(x + longerSegWidth + segWidth, fromY + segHeight + segHeight, longerSegWidth, thick);
+        r.fillRect(offset + x + longerSegWidth + segWidth, fromY + segHeight + segHeight, longerSegWidth - offset, thick);
     }
 
     // left inside squre
@@ -801,7 +816,7 @@ function drawConnection(from, to) {
 
 function drawCompletedConnections() {
     for(let c of completedConnections) {
-        drawConnection(c[0], c[1]);
+        drawConnection(c[0], c[1], completedConnections.indexOf(c));
     }
 }
 
@@ -1031,7 +1046,7 @@ function loop() {
     drawCompletedConnections();
 
     if(onRight) {
-        drawConnection(connectionStartPos, pos);
+        drawConnection(connectionStartPos, pos, completedConnections.length);
     }
 }
 

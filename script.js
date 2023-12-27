@@ -1,6 +1,5 @@
 /**
  * TODO:
- * - fix bug of 1 mult symbol getting filled if on bottom
  * -Change connections to minimze overlap between multiple connections
  * -Ability to restart game
  * -Ability to change time
@@ -215,6 +214,8 @@ function init() {
         avail[1].splice(multI, 1);
 
     }
+
+    mults[2] = 1;
 }
 
 const gameBorderMargin = 5;
@@ -241,6 +242,7 @@ function drawGameBorder() {
     let startY = margins.middleVert + half(thick);
     let y = startY + h - Math.floor((segment.height + margins.middleVert) * 1.15);
     // circle on bottom-left
+    r.beginPath();
     r.arc(
         x, y, 
         circleSize, 
@@ -248,6 +250,7 @@ function drawGameBorder() {
         2 * Math.PI
     );
     r.fill();
+    r.closePath();
 
     // top left
     r.fillRect(

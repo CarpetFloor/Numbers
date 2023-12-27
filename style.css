@@ -4,7 +4,19 @@ body {
 div {
     display: flex;
     justify-content: center;
+    margin: 0;
+    padding: 0;
 }
 canvas {
     margin-top: 25px;
+}
+#gameOverText {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin: 0;
+    padding: 0;
+    margin-top: 10px;
+    color: white;
+    opacity: 0;
 }

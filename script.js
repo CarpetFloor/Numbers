@@ -1,10 +1,12 @@
 /**
  * TODO:
+ * - fix bug of 1 mult symbol getting filled if on bottom
  * -End game when last number and mult cofirmed
  * -End game when time runs out
  * -Ability to change time
  * -Ability to restart game
  * -Change connections to minimze overlap between multiple connections
+ * -Pretty animations
  * -Make mobile friendly
  */
 
@@ -118,12 +120,13 @@ let mults = [];
 let total = 0;
 let current = 0;
 let currentDisplay = 0;
-
-let pressListener;
-let releaseListener;
 let timeUpdateInterval;
+let gameOverText;
 
 window.onload = function() {
+    gameOverText = document.getElementById("gameOverText");
+    gameOverText.style.fontSize = Math.floor(fontSize * 2) + "px";
+
     c = document.querySelector("canvas");
     r = c.getContext("2d");
 
@@ -136,8 +139,8 @@ window.onload = function() {
     init();
     loop();
 
-    pressListener = document.addEventListener("keydown", press);
-    releaseListener = document.addEventListener("keyup", release);
+    document.addEventListener("keydown", press);
+    document.addEventListener("keyup", release);
     timeUpdateInterval = window.setInterval(updateTime, 1000);
 }
 
@@ -664,17 +667,12 @@ function drawTime() {
     }
 }
 
-let gameOver = false;
-
 function updateTime() {
     --timeLeft;
     loop();
 
     if(timeLeft == 0) {
-        gameOver = true;
-        // window.setTimeout(function() {
-        //     window.alert("No time left");
-        // }, 50);
+        endGame("Time Limit Exceeded");
     }
 }
 
@@ -868,28 +866,36 @@ function findAvailMult() {
 }
 
 let completedConnections = [];
+let gameOver = false;
 
 // when a number and mult have been selected
 function confirmSelection() {
     current += numbers[connectionStartPos] * mults[pos];
 
     completedConnections.push([connectionStartPos, pos]);
-    pos = connectionStartPos;
+    
+    if(completedConnections.length == 3) {
+        gameOver = true;
+        endGame("test");
+    }
+    else {
+        pos = connectionStartPos;
 
-    // find next below number
-    let found = false;
-    while(!(found)) {
-        ++pos;
+        // find next below number
+        let found = false;
+        while(!(found)) {
+            ++pos;
 
-        if(pos > numbers.length - 1) {
-            pos = 0;
-        }
+            if(pos > numbers.length - 1) {
+                pos = 0;
+            }
 
-        found = true;
-        for(let c of completedConnections) {
-            if(c[0] == pos) {
-                found = false;
-                break;
+            found = true;
+            for(let c of completedConnections) {
+                if(c[0] == pos) {
+                    found = false;
+                    break;
+                }
             }
         }
     }
@@ -924,12 +930,14 @@ function press(e) {
                     confirmSelection();
                 }
 
-                onRight = !(onRight);
+                if(!(gameOver)) {
+                    onRight = !(onRight);
 
-                loop();
+                    loop();
 
-                if(onRight) {
-                    startCurrentUpdate();
+                    if(onRight) {
+                        startCurrentUpdate();
+                    }
                 }
                 break;
         }
@@ -943,6 +951,7 @@ function release(e) {
 }
 
 function loop() {
+    console.log("here A")
     r.clearRect(0, 0, w, h);
 
     drawGameBorder();
@@ -956,4 +965,17 @@ function loop() {
     if(onRight) {
         drawConnection(connectionStartPos, pos);
     }
+    console.log("here B")
+}
+
+function endGame(msg) {
+    // remove listeners and intervals
+    document.removeEventListener("keydown", press);
+    document.removeEventListener("keyup", release);
+    window.clearInterval(timeUpdateInterval);
+
+    gameOverText.innerText = msg;
+    gameOverText.style.opacity = "1";
+
+    console.log("game over");
 }

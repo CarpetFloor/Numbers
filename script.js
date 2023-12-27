@@ -1,11 +1,9 @@
 /**
  * TODO:
  * - fix bug of 1 mult symbol getting filled if on bottom
- * -End game when last number and mult cofirmed
- * -End game when time runs out
- * -Ability to change time
- * -Ability to restart game
  * -Change connections to minimze overlap between multiple connections
+ * -Ability to restart game
+ * -Ability to change time
  * -Pretty animations
  * -Make mobile friendly
  */
@@ -13,6 +11,9 @@
 /**
  * Note: No main game loop that runs at a set FPS because stuff only really needs to be rendered when a key pressed, other than the time happening, which only happens once a second.
  */
+
+// for debuggin
+const SHOW_ANSWER = true;
 
 let c, r, w, h;
 
@@ -157,11 +158,29 @@ function init() {
         mults.push(multOptions[Math.floor(Math.random() * multOptions.length)]);
     }
 
+    let avail = [
+        [...numbers], 
+        [...mults]
+    ]
+
     // calculate
     for(let i = 0; i < numbers.length; i++) {
-        total += numbers[i] * mults[i];
+        let numMax = avail[0].length - 1;
+        let numI = Math.floor(Math.random() * (numMax - 0) + 0);
 
-        console.log(numbers[i], "----", mults[i]);
+        let multMax = avail[1].length - 1;
+        let multI = Math.floor(Math.random() * (multMax - 0) + 0);
+        
+        total += avail[0][numI] * avail[1][multI];
+        
+        // for debuggin
+        if(SHOW_ANSWER) {
+            console.log(avail[0][numI], "----", avail[1][multI]);
+        }
+        
+        avail[0].splice(numI, 1);
+        avail[1].splice(multI, 1);
+
     }
 }
 

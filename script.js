@@ -1,6 +1,5 @@
 /**
  * TODO:
- * -Connections should make inside squares filled and colored
  * -End game when last number and mult cofirmed
  * -End game when time runs out
  * -Ability to change time
@@ -719,6 +718,29 @@ function drawConnection(from, to) {
         // last horizontal
         r.fillRect(x + longerSegWidth + segWidth, fromY + segHeight + segHeight, longerSegWidth, thick);
     }
+
+    // left inside squre
+    x = gameBorderMargin + (segment.width * 2) + segment.borderThick + widthRef;
+    y = fromY;
+    
+    // inside square on left side
+    r.fillRect(
+        x + 0.5, 
+        y - half(gameBorderSquareSize) + 0.5, 
+        gameBorderSquareSize, 
+        gameBorderSquareSize
+    );
+
+    // inside square on right side
+    x = w - gameBorderMargin - (segment.width * 2) - half(widthRef) - segment.borderThick - half(widthRef);
+    y = toY;
+    
+    r.fillRect(
+        x - 0.5, 
+        y - half(gameBorderSquareSize) + 0.5, 
+        0 - gameBorderSquareSize, 
+        gameBorderSquareSize
+    );
 }
 
 function drawCompletedConnections() {

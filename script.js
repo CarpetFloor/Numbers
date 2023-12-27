@@ -768,7 +768,10 @@ function updateCurrent() {
 
 function startCurrentUpdate() {
     currentDisplay = current;
-    let value = numbers[connectionStartPos] * mults[pos];
+    let value = 0;
+    if(completedConnections.length < 2) {
+        value = numbers[connectionStartPos] * mults[pos];
+    }
     
     // what current would be based off of number and mult selected
     alternate = current + value;
@@ -976,6 +979,4 @@ function endGame(msg) {
 
     gameOverText.innerText = msg;
     gameOverText.style.opacity = "1";
-
-    console.log("game over");
 }

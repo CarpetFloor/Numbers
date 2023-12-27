@@ -779,13 +779,13 @@ function drawConnection(from, to, index) {
         let vertOffset = 0;
         switch(index) {
             case 0:
-                vertOffset = 0 - Math.floor(segHeight * 0.7);
+                vertOffset = 0 - Math.floor(segHeight * 0.5);
                 break;
             case 1:
                 vertOffset = 0;
                 break;
             case 2:
-                vertOffset = Math.floor(segHeight * 0.3);
+                vertOffset = Math.floor(segHeight * 0.25);
                 break;
         }
 

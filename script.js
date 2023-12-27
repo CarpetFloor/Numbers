@@ -759,6 +759,7 @@ function drawConnection(from, to, index) {
         let segWidth = half(half(len));
         let longerSegWidth = Math.floor(segWidth * 1.5);
         let segHeight = half(toY - fromY);
+        let squareSize = Math.floor(segment.width / 3);
 
         // horizontal offset from center where diagonal should start
         let offset = 0;
@@ -775,16 +776,24 @@ function drawConnection(from, to, index) {
         }
 
         // first horizontal
-        r.fillRect(x, fromY,offset + longerSegWidth, thick);
+        r.fillRect(x, fromY, offset + longerSegWidth, thick);
+        // square corner
+        r.fillRect(offset + x + longerSegWidth - half(squareSize), fromY - half(squareSize), squareSize, squareSize);
 
         // first vertical
         r.fillRect(offset + x + longerSegWidth, fromY, thick, segHeight);
+        // square corner
+        r.fillRect(offset + x + longerSegWidth - half(squareSize), fromY + segHeight - half(squareSize), squareSize, squareSize);
 
         // middle horizontal
         r.fillRect(offset + x + longerSegWidth, fromY + segHeight, segWidth, thick);
+        // square corner
+        r.fillRect(offset + x + longerSegWidth + segWidth - half(squareSize),fromY + segHeight - half(squareSize), squareSize, squareSize);        
 
         // secondVertical
         r.fillRect(offset + x + longerSegWidth + segWidth, fromY + segHeight, thick, segHeight);
+        // square corner
+        r.fillRect(offset + x + longerSegWidth + segWidth - half(squareSize),fromY + segHeight + segHeight - half(squareSize), squareSize, squareSize);        
 
         // last horizontal
         r.fillRect(offset + x + longerSegWidth + segWidth, fromY + segHeight + segHeight, longerSegWidth - offset, thick);

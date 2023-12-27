@@ -775,28 +775,87 @@ function drawConnection(from, to, index) {
                 break;
         }
 
+        // vertical offset from center where diagonal should start
+        let vertOffset = 0;
+        switch(index) {
+            case 0:
+                vertOffset = 0 - Math.floor(segHeight * 0.7);
+                break;
+            case 1:
+                vertOffset = 0;
+                break;
+            case 2:
+                vertOffset = Math.floor(segHeight * 0.3);
+                break;
+        }
+
         // first horizontal
-        r.fillRect(x, fromY, offset + longerSegWidth, thick);
+        r.fillRect(
+            x, 
+            fromY, 
+            offset + longerSegWidth, 
+            thick
+        );
         // square corner
-        r.fillRect(offset + x + longerSegWidth - half(squareSize), fromY - half(squareSize), squareSize, squareSize);
+        r.fillRect(
+            offset + x + longerSegWidth - half(squareSize), 
+            fromY - half(squareSize), 
+            squareSize, 
+            squareSize
+        );
 
         // first vertical
-        r.fillRect(offset + x + longerSegWidth, fromY, thick, segHeight);
+        r.fillRect(
+            offset + x + longerSegWidth, 
+            fromY, 
+            thick, 
+            segHeight + vertOffset
+        );
         // square corner
-        r.fillRect(offset + x + longerSegWidth - half(squareSize), fromY + segHeight - half(squareSize), squareSize, squareSize);
+        r.fillRect(
+            offset + x + longerSegWidth - half(squareSize), 
+            vertOffset + fromY + segHeight - half(squareSize), 
+            squareSize, 
+            squareSize
+        );
 
         // middle horizontal
-        r.fillRect(offset + x + longerSegWidth, fromY + segHeight, segWidth, thick);
+        r.fillRect(
+            offset + x + longerSegWidth, 
+            vertOffset + fromY + segHeight, 
+            segWidth, 
+            thick
+        );
         // square corner
-        r.fillRect(offset + x + longerSegWidth + segWidth - half(squareSize),fromY + segHeight - half(squareSize), squareSize, squareSize);        
+        r.fillRect(
+            offset + x + longerSegWidth + segWidth - half(squareSize), 
+            vertOffset + fromY + segHeight - half(squareSize), 
+            squareSize, 
+            squareSize
+        );        
 
         // secondVertical
-        r.fillRect(offset + x + longerSegWidth + segWidth, fromY + segHeight, thick, segHeight);
+        r.fillRect(
+            offset + x + longerSegWidth + segWidth, 
+            vertOffset + fromY + segHeight, 
+            thick, 
+            segHeight - vertOffset
+        );
         // square corner
-        r.fillRect(offset + x + longerSegWidth + segWidth - half(squareSize),fromY + segHeight + segHeight - half(squareSize), squareSize, squareSize);        
+        r.fillRect(
+            offset + x + longerSegWidth + segWidth - half(squareSize),
+            fromY + segHeight + segHeight - half(squareSize), 
+            squareSize, 
+            squareSize
+        );        
 
         // last horizontal
-        r.fillRect(offset + x + longerSegWidth + segWidth, fromY + segHeight + segHeight, longerSegWidth - offset, thick);
+        r.fillRect(
+            offset + x + longerSegWidth + segWidth, 
+            fromY + segHeight + segHeight, 
+            longerSegWidth - offset, 
+            thick
+            );
     }
 
     // left inside squre

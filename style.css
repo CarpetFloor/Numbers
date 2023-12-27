@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata&display=swap");
+
 body {
     background-color: black;
 }
@@ -16,7 +18,9 @@ canvas {
     user-select: none;
     margin: 0;
     padding: 0;
-    margin-top: 10px;
+    margin-top: 20px;
     color: white;
     opacity: 0;
+    font-family: "Inconsolata";
+    font-weight: bold;
 }

@@ -115,7 +115,7 @@ const segmentsLocations = [
 ]
 
 let numbers = [];
-const multOptions = [1, 2, 10];
+let multOptions = [];
 let mults = [];
 let total = 0;
 let current = 0;
@@ -147,6 +147,7 @@ window.onload = function() {
 // generates numbers, mults, and target
 function init() {
     numbers = [];
+    multOptions = [1, 2, 10];
     mults = [];
     total = 0;
     current = 0;
@@ -188,20 +189,24 @@ function init() {
         }
 
         mults.push(multOptions[multChoice]);
+
+        multOptions.splice(multChoice, 1);
     }
 
     let avail = [
         [...numbers], 
         [...mults]
-    ]
+    ];
 
     // calculate
     for(let i = 0; i < numbers.length; i++) {
-        let numMax = avail[0].length - 1;
-        let numI = Math.floor(Math.random() * numMax);
-
+        // let numMax = avail[0].length - 1;
+        // let numI = Math.floor(Math.random() * numMax);
+        let numI = 0;
+        
         let multMax = avail[1].length - 1;
         let multI = Math.floor(Math.random() * multMax);
+        // console.log(avail[0][numI], avail[1][multI])
         
         total += avail[0][numI] * avail[1][multI];
         

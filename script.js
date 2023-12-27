@@ -769,9 +769,7 @@ function updateCurrent() {
 function startCurrentUpdate() {
     currentDisplay = current;
     let value = 0;
-    if(completedConnections.length < 2) {
-        value = numbers[connectionStartPos] * mults[pos];
-    }
+    value = numbers[connectionStartPos] * mults[pos];
     
     // what current would be based off of number and mult selected
     alternate = current + value;
@@ -840,7 +838,7 @@ function verticalMove(amount, key) {
 
     loop();
 
-    if(onRight) {
+    if(onRight && (completedConnections.length < 2)) {
         startCurrentUpdate();
     }
 }
@@ -954,7 +952,6 @@ function release(e) {
 }
 
 function loop() {
-    console.log("here A")
     r.clearRect(0, 0, w, h);
 
     drawGameBorder();
@@ -968,7 +965,6 @@ function loop() {
     if(onRight) {
         drawConnection(connectionStartPos, pos);
     }
-    console.log("here B")
 }
 
 function endGame(msg) {

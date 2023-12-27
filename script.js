@@ -214,8 +214,6 @@ function init() {
         avail[1].splice(multI, 1);
 
     }
-
-    mults[2] = 1;
 }
 
 const gameBorderMargin = 5;
@@ -934,7 +932,6 @@ function confirmSelection() {
         current += numbers[c[0]] * mults[c[1]];
     }
     
-    console.log(current, total)
     if(completedConnections.length == 3) {
         gameOver = true;
 

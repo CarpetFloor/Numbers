@@ -154,16 +154,37 @@ function init() {
 
     // generate numbers and multipliers
     for(let i = 0; i < 3; i++) {
-        numbers.push(Math.floor(Math.random() * (9 - 1) + 1));
+        let numChoice = Math.floor(Math.random() * (9 - 1) + 1);
+
+        // make sure all nums aren't the same
+        if(numbers.length == 2) {
+            if(
+                (numbers[0] == numChoice) && 
+                (numbers[1] == numChoice)
+            ) {
+                ++numChoice;
+
+                if(numChoice > 9) {
+                    numChoice = 0;
+                }
+            }
+        }
+
+        numbers.push(numChoice);
 
         let multChoice = Math.floor(Math.random() * multOptions.length);
 
         // make sure all mults aren't the same
-        if((mults[0] == multOptions[multChoice]) ** (mults[1] == multOptions[multChoice])) {
-            ++multChoice;
+        if(mults.length == 2) {
+            if(
+                (mults[0] == multOptions[multChoice]) && 
+                (mults[1] == multOptions[multChoice])
+            ) {
+                ++multChoice;
 
-            if(multChoice > multOptions.length - 1) {
-                multChoice = 0;
+                if(multChoice > multOptions.length - 1) {
+                    multChoice = 0;
+                }
             }
         }
 

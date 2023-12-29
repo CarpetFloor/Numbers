@@ -1,6 +1,5 @@
 /**
  * TODO:
- * -Change connections to minimze overlap between multiple connections
  * -Ability to restart game
  * -Ability to change time
  * -Pretty animations
@@ -779,13 +778,13 @@ function drawConnection(from, to, index) {
         let vertOffset = 0;
         switch(index) {
             case 0:
-                vertOffset = 0 - Math.floor(segHeight * 0.5);
-                break;
-            case 1:
                 vertOffset = 0;
                 break;
-            case 2:
+            case 1:
                 vertOffset = Math.floor(segHeight * 0.25);
+                break;
+            case 2:
+                vertOffset = 0 - Math.floor(segHeight * 0.5);
                 break;
         }
 

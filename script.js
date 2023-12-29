@@ -1,11 +1,4 @@
 /**
- * TODO:
- * -Ability to change time
- * -Pretty animations
- * -Make mobile friendly
- */
-
-/**
  * Note: No main game loop that runs at a set FPS because stuff only really needs to be rendered when a key pressed, other than the time happening, which only happens once a second.
  */
 

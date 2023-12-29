@@ -10,7 +10,8 @@
  */
 
 // for debuggin
-const SHOW_ANSWER = false;
+const SHOW_ANSWER = true;
+let initDebugLog = "";
 
 let c, r, w, h;
 
@@ -34,9 +35,9 @@ const segment = {
     borderThick: 1
 }
 const fontSize = 14;
-const secondsPerSection = 5;
+const secondsPerSection = 3;
 // in seconds
-let time = 30;
+let time = 15;
 let timeLeft = time;
 
 const numToSegment = [
@@ -135,15 +136,22 @@ window.onload = function() {
     h = c.height;
 
     init();
+    
     loop();
 
     document.addEventListener("keydown", press);
     document.addEventListener("keyup", release);
     timeUpdateInterval = window.setInterval(updateTime, 1000);
+    
 }
 
 // generates numbers, mults, and target
 function init() {
+    initDebugLog = "";
+    if(SHOW_ANSWER) {
+        console.clear();
+    }
+    
     numbers = [];
     multOptions = [1, 2, 10];
     mults = [];
@@ -191,11 +199,144 @@ function init() {
         multOptions.splice(multChoice, 1);
     }
 
+    // pick which numbers should have a mult offset
+
+    /**
+     * Old way, commented out below. Not used because during 
+     * testing there still seemed to be far too many number 
+     * + mult combinations that were straight across
+     */
+    /*
+    // first number
+    let numbersWithOffsetMult = [];
+    numbersWithOffsetMult.push(Math.floor(Math.random() * 3));
+
+    // second number
+    let nextChoice = Math.floor(Math.random() * 3);
+    if(numbersWithOffsetMult[0] == nextChoice) {
+        ++nextChoice;
+
+        if(nextChoice > 2) {
+            nextChoice = 0;
+        }
+    }
+    numbersWithOffsetMult.push(nextChoice);
+    */
+    // new method: force every number to offset mult
+    numbersWithOffsetMult = [0, 1, 2];
+
     let avail = [
         [...numbers], 
         [...mults]
     ];
 
+    let multPosUsed = [];
+
+    initDebugLog += "\n" + ("AVAIL");
+    initDebugLog += "\n" + ("NUMBERS" + " " + avail[0]);
+    initDebugLog += "\n" + ("MULTS" + " " + avail[1]);
+    initDebugLog += "\n" + ("NumbersWithOffsetMult");
+    initDebugLog += "\n" + (numbersWithOffsetMult);
+    // initDebugLog += "\n" + ("--------------------");
+    // calc target
+    for(let i = 0; i < 3; i++) {
+        initDebugLog += "\n" + ("----------");
+        initDebugLog += "\n" + ("OFFSET?" + " " + i + " " + numbersWithOffsetMult.includes(i))
+        initDebugLog += "\n" + ("MULT_POS_USED" + " " + multPosUsed);
+        // number that should have offset mult
+        if(numbersWithOffsetMult.includes(i)) {
+            // randomly choose the mult to be 1 above or below
+            let offsetDir = Math.floor(Math.random() * 2);
+            let offset = (offsetDir == 0) ? 1 : -1; 
+
+            let mult = i + offset;
+            if(mult > numbers.length - 1) {
+                mult = 0;
+            }
+            if(mult < 0) {
+                mult = numbers.length - 1;
+            }
+
+            // mult is not already used
+            if(!(multPosUsed.includes(mult))) {
+                initDebugLog += "\n" + ("A" + " " + offset);
+                total += avail[0][i] * avail[1][mult];
+
+                if(SHOW_ANSWER) {
+                    console.log(avail[0][i] + " " + "----" + " " + avail[1][mult]);
+                }
+                initDebugLog += "\n" + (avail[0][i] + " " + "----" + " " + avail[1][mult]);
+
+                multPosUsed.push(mult);
+            }
+            // mult is already used, so find next avail
+            else {
+                initDebugLog += "\n" + ("B");
+                // randomly decide if should go down or up to find avail
+                let moveDir = Math.floor(Math.random() * 2);
+                let move = (moveDir == 0) ? 1 : -1;
+                let pos = i;
+
+                while(multPosUsed.includes(pos)) {
+                    pos += move;
+
+                    if(pos > numbers.length - 1) {
+                        pos = 0;
+                    }
+                    if(pos < 0) {
+                        pos = numbers.length - 1;
+                    }
+                }
+
+                total += avail[0][i] * avail[1][pos];
+
+                if(SHOW_ANSWER) {
+                    console.log(avail[0][i] + " " + "----" + " " + avail[1][pos]);
+                }
+                initDebugLog += "\n" + (avail[0][i] + " " + "----" + " " + avail[1][pos]);
+
+                multPosUsed.push(pos);
+            }
+        }
+        else {
+            /**
+             * Find the next avail mult, but incase the mult 
+             * at the same level is already used, use a loop 
+             * to find the next avail. But the loop should 
+             * move in a random direction to find next avail
+             */
+            let moveDir = Math.floor(Math.random() * 2);
+            let move = (moveDir == 0) ? 1 : -1;
+            let pos = i;
+
+            if(multPosUsed.includes(pos)) {
+                while(multPosUsed.includes(pos)) {
+                    pos += move;
+
+                    if(pos > numbers.length - 1) {
+                        pos = 0;
+                    }
+                    if(pos < 0) {
+                        pos = numbers.length - 1;
+                    }
+                }
+            }
+
+            total += avail[0][i] * avail[1][pos];
+
+            if(SHOW_ANSWER) {
+                console.log(avail[0][i] + " " + "----" + " " + avail[1][pos]);
+            }
+            initDebugLog += "\n" + (avail[0][i] + " " + "----" + " " + avail[1][pos]);
+
+            multPosUsed.push(pos);
+        }
+
+        initDebugLog += "\n" + ("TOTAL" + " " + total)
+
+    }
+
+    /*
     // calculate
     for(let i = 0; i < numbers.length; i++) {
         // let numMax = avail[0].length - 1;
@@ -204,19 +345,20 @@ function init() {
         
         let multMax = avail[1].length - 1;
         let multI = Math.floor(Math.random() * multMax);
-        // console.log(avail[0][numI], avail[1][multI])
+        // initDebugLog += "\n" + (avail[0][numI], avail[1][multI])
         
         total += avail[0][numI] * avail[1][multI];
         
         // for debuggin
         if(SHOW_ANSWER) {
-            console.log(avail[0][numI], "----", avail[1][multI]);
+            initDebugLog += "\n" + (avail[0][numI], "----", avail[1][multI]);
         }
         
         avail[0].splice(numI, 1);
         avail[1].splice(multI, 1);
 
     }
+    */
 }
 
 const gameBorderMargin = 5;
@@ -1149,4 +1291,11 @@ function restartCheck(e) {
         document.addEventListener("keyup", release);
         timeUpdateInterval = window.setInterval(updateTime, 1000);
     }
+}
+
+// for debugging
+function showInitLog() {
+    console.log("INIT LOG");
+    console.log(initDebugLog);
+    console.log("\n--------------------\nEND OF INIT LOG\n--------------------");
 }

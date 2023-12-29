@@ -1251,6 +1251,8 @@ function press(e) {
                     onRight = false;
                     pos = connectionStartPos;
                     currentDisplay = current;
+
+                    loop();
                 }
                 break;
         }

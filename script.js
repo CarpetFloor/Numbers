@@ -881,6 +881,9 @@ function changeTime() {
     else {
         window.alert("Invalid time");
     }
+
+    // unfocus button so space bar doesn't click it
+    document.getElementById("timeChange").blur();
 }
 
 let connectionStartPos = -1;

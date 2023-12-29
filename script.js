@@ -1241,6 +1241,15 @@ function press(e) {
                     }
                 }
                 break;
+            case "Backspace":
+                pressing = true;
+                lastPressed = e.key;
+                if(onRight) {
+                    onRight = false;
+                    pos = connectionStartPos;
+                    currentDisplay = current;
+                }
+                break;
         }
     }
 }

@@ -3,7 +3,7 @@
  */
 
 // for debuggin
-const SHOW_ANSWER = true;
+const SHOW_ANSWER = false;
 let initDebugLog = "";
 
 let c, r, w, h;
@@ -28,7 +28,7 @@ const segment = {
     borderThick: 1
 }
 const fontSize = 14;
-const secondsPerSection = 4;
+let secondsPerSection = 4;
 // in seconds
 let time = 20;
 let timeLeft = time;
@@ -864,6 +864,22 @@ function updateTime() {
 
     if(timeLeft == 0) {
         endGame("Time Limit Exceeded");
+    }
+}
+
+function changeTime() {
+    let input = window.prompt("Time? (must be integer > 0)");
+    let int = parseInt(input);
+    let check = Math.abs(int) - Math.abs(int);
+    
+    if(check == 0) {
+        time = int;
+        timeLeft = time;
+
+        secondsPerSection = time / 5;
+    }
+    else {
+        window.alert("Invalid time");
     }
 }
 

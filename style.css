@@ -26,3 +26,19 @@ canvas {
     font-family: "Inconsolata";
     font-weight: bold;
 }
+#timeChange {
+    position: absolute;
+    margin-top: -35px;
+    margin-left: -400px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: grey;
+    border: 1px solid grey;
+    border-radius: 5px;
+}
+#timeChange:hover {
+    background-color: grey;
+    color: black;
+    cursor: pointer;
+}

@@ -1,6 +1,5 @@
 /**
  * TODO:
- * -Ability to restart game
  * -Ability to change time
  * -Pretty animations
  * -Make mobile friendly
@@ -11,7 +10,7 @@
  */
 
 // for debuggin
-const SHOW_ANSWER = true;
+const SHOW_ANSWER = false;
 
 let c, r, w, h;
 
@@ -1123,6 +1122,31 @@ function endGame(msg) {
     document.removeEventListener("keyup", release);
     window.clearInterval(timeUpdateInterval);
 
-    gameOverText.innerText = msg;
+    gameOverText.innerHTML = msg + " <span style='font-weight: normal;'>(space to restart)</span>";
     gameOverText.style.opacity = "1";
+
+    document.addEventListener("keydown", restartCheck);
+}
+
+function restartCheck(e) {
+    if(e.key == " ") {
+        document.removeEventListener("keydown", restartCheck);
+
+        gameOverText.style.opacity = "0";
+        timeLeft = time;
+        completedConnections = [];
+        onRight = false;
+        pos = 0;
+        current = 0;
+        currentDisplay = 0;
+        currentColor = "white";
+        gameOver = false;
+
+        init();
+        loop();
+
+        document.addEventListener("keydown", press);
+        document.addEventListener("keyup", release);
+        timeUpdateInterval = window.setInterval(updateTime, 1000);
+    }
 }

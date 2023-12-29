@@ -35,9 +35,9 @@ const segment = {
     borderThick: 1
 }
 const fontSize = 14;
-const secondsPerSection = 3;
+const secondsPerSection = 4;
 // in seconds
-let time = 15;
+let time = 20;
 let timeLeft = time;
 
 const numToSegment = [

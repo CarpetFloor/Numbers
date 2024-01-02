@@ -1,4 +1,17 @@
 /**
+ * Mobile stuff to do:
+ * BIG THING TO KEEP IN MIND is to make sure stuff looks good on small and large phones
+ * -Left line with dot height not correct
+ * -Inside lines that connect numbers/ mults to box are too wide
+ * -Inside boxes x pos not correct
+ * -Line on left side extends too far up
+ * -Three horizontal lines outside of numbers and mults are not wide enough
+ * -Two lines that make up bottom-right corener of border do not meet
+ * -Vertical position of time is not correct
+ * -EVERYTHING for mobile but not mobile vert (tablets/ horizontal phones)
+ */
+
+/**
  * Note: No main game loop that runs at a set FPS because stuff only really needs to be rendered when a key pressed, other than the time happening, which only happens once a second.
  */
 
@@ -18,14 +31,23 @@ const margins = {
 
 // vertical spacing between stuff
 const leftRightSpacing = 75;
-const segSize = 12;
-const segment = {
+let defaultSegSize = 12;
+let segSize = defaultSegSize;
+let segment = {
     width: segSize * 3, 
     height: segSize * 5, 
     thick: Math.ceil(segSize * 0.5), 
-    borderMarginSide: 20, 
-    borderMarginVert: 30, 
-    borderThick: 1
+    borderMarginSide: Math.ceil(segSize * 1.5), 
+    borderMarginVert: Math.floor(segSize * 2.5), 
+    borderThick: 1, 
+    init: function() {
+        this.width = segSize * 3;
+        this.height = segSize * 5;
+        this.thick = Math.ceil(segSize * 0.5);
+        this.borderMarginSide = Math.ceil(segSize * 1.5);
+        this.borderMarginVert = Math.floor(segSize * 2.5);
+        this.borderThick = 1;
+    }
 }
 const fontSize = 14;
 let secondsPerSection = 4;
@@ -115,15 +137,57 @@ let currentDisplay = 0;
 let timeUpdateInterval;
 let gameOverText;
 
+let mobile = false;
+let mobileVert = false;
+
+function mobileCheck() {
+    let a = navigator.userAgent||navigator.vendor||window.opera;
+    
+    mobile = (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4)));
+
+    mobileVert = window.innerHeight > window.innerWidth;
+}
+
+// general stuff
+function mobileResize() {
+    if(mobile) {
+        if(mobileVert) {
+            // change time button
+            let ref = document.getElementById("timeChange");
+            let rect = c.getBoundingClientRect();
+            ref.style.marginLeft = "-" + (window.innerWidth * 0.65) + "px";
+            ref.style.marginTop = "-" + ref.offsetHeight + "px";
+
+            // seg size
+            segSize = Math.ceil(window.innerHeight / 100);
+            segment.init();
+        }
+    }
+}
+
 window.onload = function() {
+    mobileCheck();
     gameOverText = document.getElementById("gameOverText");
     gameOverText.style.fontSize = Math.floor(fontSize * 2) + "px";
 
     c = document.querySelector("canvas");
     r = c.getContext("2d");
 
-    c.width = 700;
-    c.height = 575;
+    if(mobile) {
+        mobileResize();
+    }
+
+
+    if(mobile) {
+        if(mobileVert) {
+            c.width = window.innerWidth - 30;
+            c.height = Math.floor(window.innerHeight * 0.7);
+        }
+    }
+    else {
+        c.width = 700;
+        c.height = 575;
+    }
 
     w = c.width;
     h = c.height;
@@ -366,16 +430,21 @@ function drawGameBorder() {
     const squareSize = gameBorderSquareSize;
     // for inside of numbers and mults
     const circleSize = Math.floor(squareSize * 0.7);
+    let startY = margins.middleVert + half(thick);
+    if(mobile) {
+        if(mobileVert) {
+            startY = 0 + half(thick);
+        }
+    }
     // left
     r.fillRect(
         margin + half(thick), 
-        margins.middleVert + half(thick), 
+        startY, 
         thick, 
         h - Math.floor((segment.height + margins.middleVert) * 1.15)
     );
     
     let x = margin + half(thick);
-    let startY = margins.middleVert + half(thick);
     let y = startY + h - Math.floor((segment.height + margins.middleVert) * 1.15);
     // circle on bottom-left
     r.beginPath();
@@ -425,6 +494,11 @@ function drawGameBorder() {
     // bottom left inside
     let startX = half(w - (margin * 2)) - half((segment.width + segment.borderMarginSide) * 3) + half(half(segment.borderMarginSide));
     let endX = margins.side + segment.width + segment.borderMarginSide + timeWidth + segment.borderThick;
+    if(mobile) {
+        if(mobileVert) {
+            endX = half(half(margins.side)) + timeWidth + thick;
+        }
+    }
     r.fillRect(
         startX, 
         h - margins.middleVert + half(thick), 
@@ -433,30 +507,33 @@ function drawGameBorder() {
     );
 
     // bottom left outside
-    let bottomLeftScale = 7;
-    startX = margins.side + segment.width + segment.borderMarginSide - segment.borderThick;
-    r.fillRect(
-        startX, 
-        h - margins.middleVert + half(thick), 
-        -Math.floor(timeWidth / bottomLeftScale), 
-        thick
-    );
-    
-    // three lines of ascending height to the left of time
-    x = startX - Math.floor((timeWidth / bottomLeftScale));
-    y = h - margins.middleVert + half(thick);
-    let lineHeight = Math.floor(timeHeight / 4);
-    for(let i = 0; i < 3; i++) {
+    if(!(mobile) && !(mobileVert)) {
+        let bottomLeftScale = 7;
+        startX = margins.side + segment.width + segment.borderMarginSide - segment.borderThick;
         r.fillRect(
-            x, y - half(lineHeight), 
-            thick, lineHeight
+            startX, 
+            h - margins.middleVert + half(thick), 
+            -Math.floor(timeWidth / bottomLeftScale), 
+            thick
         );
-
-        x -= thick * 3;
-        lineHeight = Math.floor(lineHeight * 1.5);
+        
+        // three lines of ascending height to the left of time
+        x = startX - Math.floor((timeWidth / bottomLeftScale));
+        y = h - margins.middleVert + half(thick);
+        let lineHeight = Math.floor(timeHeight / 4);
+        for(let i = 0; i < 3; i++) {
+            r.fillRect(
+                x, y - half(lineHeight), 
+                thick, lineHeight
+            );
+    
+            x -= thick * 3;
+            lineHeight = Math.floor(lineHeight * 1.5);
+        }
     }
+    
 
-    // left horizontal lines
+    // left horizontal lines near numbers
     r.lineWidth = thick;
     r.strokeStyle = "white";
     y = margins.leftRightVert;
@@ -611,15 +688,18 @@ function segmentBorder(highlight, x, y) {
 
 function segmentDisplay(digit, x, y) {
     for(let i = 0; i < numToSegment[0].length; i++) {
+        let scale = defaultSegSize / segSize;
+        
         let from = {
-            x: segmentsLocations[i][0] * numToSegment[digit][i], 
-            y: segmentsLocations[i][1] * numToSegment[digit][i]
+            x: (segmentsLocations[i][0] / scale) * numToSegment[digit][i], 
+            y: (segmentsLocations[i][1] / scale) * numToSegment[digit][i]
         };
 
         let to = {
-            x: segmentsLocations[i][2] * numToSegment[digit][i], 
-            y: segmentsLocations[i][3] * numToSegment[digit][i]
+            x: (segmentsLocations[i][2] / scale) * numToSegment[digit][i], 
+            y: (segmentsLocations[i][3] / scale) * numToSegment[digit][i]
         };
+
 
         r.fillRect(x + from.x, y + from.y, to.x, to.y);
     }
@@ -775,6 +855,12 @@ function drawCurrent() {
 
     let x = half(w) - half((segment.width * 3));
     let yOffset = 2;
+    let textYoffset = 0;
+    if(mobile) {
+        if(mobileVert) {
+            textYoffset = 0 - (10 - Math.floor(window.innerHeight / 100));
+        }
+    }
 
     // add leading zeros
     let currentString = currentDisplay.toString();
@@ -798,7 +884,7 @@ function drawCurrent() {
             r.fillText(
                 "RESULT", 
                 x - offset, 
-                h - margins.middleVert + segment.height - yOffset);
+                h - margins.middleVert + segment.height - yOffset - textYoffset);
         }
 
         x += segment.width + spacing;
@@ -819,6 +905,11 @@ function drawTime() {
     let sectionWidth = Math.floor(timeWidth / ((time / secondsPerSection))) - spacing - (spacing / totalSections);
 
     let x = margins.side + segment.width + segment.borderMarginSide;
+    if(mobile) {
+        if(mobileVert) {
+            x = half(half(margins.side));
+        }
+    }    
     let y = h - segment.height - half(timeHeight);
 
     r.fillStyle = "white";
@@ -1267,6 +1358,8 @@ function release(e) {
 
 function loop() {
     r.clearRect(0, 0, w, h);
+    // r.fillStyle = "#CC99FF";
+    // r.fillRect(0, 0, w, h);
 
     drawGameBorder();
     drawTarget();

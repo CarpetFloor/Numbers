@@ -12,7 +12,7 @@ div {
     padding: 0;
 }
 canvas {
-    margin-top: 25px;
+    margin-top: 10px;
 }
 #gameOverText {
     -webkit-user-select: none;
@@ -28,7 +28,7 @@ canvas {
 }
 #timeChange {
     position: absolute;
-    margin-top: -35px;
+    margin-top: -62px;
     margin-left: -400px;
     border: none;
     outline: none;

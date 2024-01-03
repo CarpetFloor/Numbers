@@ -1,11 +1,10 @@
 /**
  * Mobile stuff to do:
  * BIG THING TO KEEP IN MIND is to make sure stuff looks good on small and large phones
- * -Left line with dot height not correct
- * -Inside lines that connect numbers/ mults to box are too wide
- * -Inside boxes x pos not correct
- * -Line on left side extends too far up
- * -Three horizontal lines outside of numbers and mults are not wide enough
+ * -Set margins (under margins object) based off of segSize
+ * -Create margins init function and call under mobileResize()
+ * -Position of numbers, mults, and borders not correct across different phone sizes
+ * -Right line of number border extends too far down
  * -Two lines that make up bottom-right corener of border do not meet
  * -Vertical position of time is not correct
  * -EVERYTHING for mobile but not mobile vert (tablets/ horizontal phones)
@@ -21,18 +20,24 @@ let initDebugLog = "";
 
 let c, r, w, h;
 
+let defaultSegSize = 12;
+let segSize = defaultSegSize;
+
 const margins = {
     // for target and results
-    middleVert: 60, 
+    middleVert: segSize * 7, 
     // for nums and mults
-    leftRightVert: 150, 
-    side: 50
+    leftRightVert: segSize * 12.5, 
+    side: segSize * 4.15, 
+    init: function() {
+        this.middleVert = segSize * 7;
+        this.leftRightVert = segSize * 12.5;
+        this.side = segSize * 4.15;
+    }
 }
 
 // vertical spacing between stuff
 const leftRightSpacing = 75;
-let defaultSegSize = 12;
-let segSize = defaultSegSize;
 let segment = {
     width: segSize * 3, 
     height: segSize * 5, 
@@ -154,13 +159,16 @@ function mobileResize() {
         if(mobileVert) {
             // change time button
             let ref = document.getElementById("timeChange");
-            let rect = c.getBoundingClientRect();
+            ref.style.position = "absolute";
             ref.style.marginLeft = "-" + (window.innerWidth * 0.65) + "px";
-            ref.style.marginTop = "-" + ref.offsetHeight + "px";
+            ref.style.marginTop = "-" + (timeHeight * 1) + "px";
 
             // seg size
             segSize = Math.ceil(window.innerHeight / 100);
             segment.init();
+
+            // set margins
+            margins.init();
         }
     }
 }
@@ -169,6 +177,11 @@ window.onload = function() {
     mobileCheck();
     gameOverText = document.getElementById("gameOverText");
     gameOverText.style.fontSize = Math.floor(fontSize * 2) + "px";
+    if(mobile) {
+        if(mobileVert) {
+            gameOverText.style.fontSize = "2.5vmax";
+        }
+    }
 
     c = document.querySelector("canvas");
     r = c.getContext("2d");
@@ -178,16 +191,18 @@ window.onload = function() {
     }
 
 
-    if(mobile) {
-        if(mobileVert) {
-            c.width = window.innerWidth - 30;
-            c.height = Math.floor(window.innerHeight * 0.7);
-        }
+    if(mobile && mobileVert) {
+        c.width = window.innerWidth - 30;
+        c.height = Math.floor(window.innerHeight * 0.75);
+        // c.height = 520;
     }
     else {
         c.width = 700;
         c.height = 575;
     }
+    console.log("MOBILE", mobile);
+    console.log("MOBILE_VERT", mobileVert);
+    console.log(c.width, c.height)
 
     w = c.width;
     h = c.height;
@@ -431,17 +446,20 @@ function drawGameBorder() {
     // for inside of numbers and mults
     const circleSize = Math.floor(squareSize * 0.7);
     let startY = margins.middleVert + half(thick);
+    let yDiff = 0;
     if(mobile) {
         if(mobileVert) {
-            startY = 0 + half(thick);
+            let temp = 0 + half(thick) + 10;
+            yDiff = startY - temp;
+            startY = temp;  
         }
     }
     // left
     r.fillRect(
         margin + half(thick), 
-        startY, 
+        startY + yDiff, 
         thick, 
-        h - Math.floor((segment.height + margins.middleVert) * 1.15)
+        h - Math.floor((segment.height + margins.middleVert) * 1.15) - yDiff
     );
     
     let x = margin + half(thick);
@@ -466,10 +484,20 @@ function drawGameBorder() {
     );
 
     // top right
+    let topRightWidthScale = 0.5;
+    if(mobile) {
+        if(mobileVert) {
+            topRightWidthScale -= (window.innerWidth / window.innerHeight) / 2;
+
+            if(topRightWidthScale < 0) {
+                topRightWidthScale = 0;
+            }
+        }
+    }
     r.fillRect(
-        half(w - (margin * 2)) + half((segment.width + segment.borderMarginSide) * 3) + half(segment.borderMarginSide), 
-        margins.middleVert + half(thick), 
-        half(w - (margin * 2)) - half((segment.width + segment.borderMarginSide) * 3) - half(half(segment.borderMarginSide)), 
+        ((w - (margin * 2)) / 2) + (((segment.width + segment.borderMarginSide) * 3) / 2) + (segment.borderMarginSide / 2), 
+        margins.middleVert + (thick / 2), 
+        ((w - (margin * 2)) / 2) - (((segment.width + segment.borderMarginSide) * 3) / 2) - ((segment.borderMarginSide / 2) * topRightWidthScale), 
         thick
     );
 
@@ -485,9 +513,9 @@ function drawGameBorder() {
 
     // bottom right
     r.fillRect(
-        half(w - (margin * 2)) + half((segment.width + segment.borderMarginSide) * 3) + half(segment.borderMarginSide), 
-        h - margins.middleVert + half(thick), 
-        half(w - (margin * 2)) - half((segment.width + segment.borderMarginSide) * 3) - half(half(segment.borderMarginSide)), 
+        ((w - (margin * 2)) / 2) + (((segment.width + segment.borderMarginSide) * 3) / 2) + (segment.borderMarginSide / 2), 
+        h - margins.middleVert + (thick / 2), 
+        ((w - (margin * 2)) / 2) - (((segment.width + segment.borderMarginSide) * 3) / 2) - ((segment.borderMarginSide / 2) * topRightWidthScale), 
         thick
     );
 
@@ -531,7 +559,6 @@ function drawGameBorder() {
             lineHeight = Math.floor(lineHeight * 1.5);
         }
     }
-    
 
     // left horizontal lines near numbers
     r.lineWidth = thick;
@@ -655,32 +682,44 @@ function segmentBorder(highlight, x, y) {
 
     // top
     r.fillRect(
-        x - half(segment.width) - half(segment.borderMarginSide) - half(thick), 
-        y - half(segment.height) - half(segment.borderMarginVert) - half(thick), 
+        x - (segment.width / 2) - (segment.borderMarginSide / 2) - (thick / 2), 
+        y - (segment.height / 2) - (segment.borderMarginVert / 2) - (thick / 2), 
         segment.width + segment.borderMarginSide, 
         thick
     );
 
+    let rightThick = segment.height + segment.borderMarginVert + thick;
+    // if(mobile) {
+    //     if(mobileVert) {
+    //         if(highlight) {
+    //             rightThick -= half(thick);
+    //         }
+    //         else {
+    //             rightThick -= thick;
+    //         }
+    //     }
+    // }
+
     // right
     r.fillRect(
-        x + half(segment.width) + half(segment.borderMarginSide) - half(thick), 
-        y - half(segment.height) - half(segment.borderMarginVert) - half(thick), 
+        x + (segment.width / 2) + (segment.borderMarginSide / 2) - (thick / 2), 
+        y - (segment.height / 2) - (segment.borderMarginVert / 2) - (thick / 2), 
         thick,  
-        segment.height + segment.borderMarginVert + thick
+        rightThick
     );
 
     // bottom
     r.fillRect(
-        x - half(segment.width) - half(segment.borderMarginSide) - half(thick), 
-        y + half(segment.height) + half(segment.borderMarginVert) - half(thick), 
+        x - (segment.width / 2) - (segment.borderMarginSide / 2) - (thick / 2), 
+        y + (segment.height / 2) + (segment.borderMarginVert / 2) - (thick / 2), 
         segment.width + segment.borderMarginSide, 
         thick
     );
 
     // left
     r.fillRect(
-        x - half(segment.width) - half(segment.borderMarginSide) - half(thick), 
-        y - half(segment.height) - half(segment.borderMarginVert) - half(thick), 
+        x - (segment.width / 2) - (segment.borderMarginSide / 2) - (thick / 2), 
+        y - (segment.height / 2) - (segment.borderMarginVert / 2) - (thick / 2), 
         thick,  
         segment.height + segment.borderMarginVert
     );
@@ -717,6 +756,7 @@ function drawNums() {
     }
     
     for(let i = 0; i < numbers.length; i++) {
+
         segmentBorder((i == highlightCheck), margins.side, y);
         r.fillStyle = "white";
         segmentDisplay(numbers[i], margins.side, y);
@@ -820,6 +860,12 @@ function drawMults() {
             case 10:
                 let pos = Math.floor(segment.width * 0.75);
                 marg = segment.borderThick * 8;
+                
+                if(mobile) {
+                    if(mobileVert) {
+                        marg *= 0.5;
+                    }
+                }
                 // \
                 r.beginPath();
                 r.moveTo(
@@ -848,13 +894,14 @@ function drawMults() {
 }
 
 let currentColor = "white";
+let currentYoffset = 2;
 
 function drawCurrent() {
     r.font = fontSize + "px Arial";
     let spacing = segment.borderMarginSide;
 
     let x = half(w) - half((segment.width * 3));
-    let yOffset = 2;
+    let yOffset = currentYoffset;
     let textYoffset = 0;
     if(mobile) {
         if(mobileVert) {
@@ -910,7 +957,13 @@ function drawTime() {
             x = half(half(margins.side));
         }
     }    
-    let y = h - segment.height - half(timeHeight);
+
+    let y = h - (segment.height * 1.4) - half(timeHeight);
+    if(mobile) {
+        if(mobileVert) {
+            y = h - margins.middleVert - 15;
+        }
+    }
 
     r.fillStyle = "white";
     // top

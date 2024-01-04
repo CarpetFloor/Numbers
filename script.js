@@ -14,8 +14,10 @@
  * Note: No main game loop that runs at a set FPS because stuff only really needs to be rendered when a key pressed, other than the time happening, which only happens once a second.
  */
 
-// for debuggin
+// for debugging
 const SHOW_ANSWER = false;
+// for debugging
+const SHOW_MOBILE_BOUNDS = false;
 let initDebugLog = "";
 
 let c, r, w, h;
@@ -164,13 +166,77 @@ function mobileResize() {
             ref.style.marginTop = "-" + (timeHeight * 1) + "px";
 
             // seg size
-            segSize = Math.ceil(window.innerHeight / 100);
+            segSize = 8;
             segment.init();
 
             // set margins
             margins.init();
         }
     }
+}
+
+function createMobileControls() {
+    let ref = document.body;
+
+    let mainContainer = document.createElement("div");
+    mainContainer.style.position = "absolute";
+    mainContainer.style.display = "flex";
+    mainContainer.style.flexDirection = "column";
+    mainContainer.style.justifyContent = "flex-start";
+    // mainContainer.style.marginLeft = (window.innerWidth * 0.09) + "px";
+    mainContainer.style.marginTop = "10px";
+    mainContainer.style.width = (c.width) + "px";
+    mainContainer.style.height = (c.height) + "px";
+    // mainContainer.style.height = 
+    if(SHOW_MOBILE_BOUNDS) {
+        mainContainer.style.backgroundColor = "blue";
+        mainContainer.style.opacity = "0.5";
+    }
+
+    for(let i = 0; i < 3; i++) {
+        let container = document.createElement("div");
+        container.style.display = "flex";
+        container.style.width = "100%";
+        container.style.flexDirection = "row";
+        container.style.justifyContent = "space-between";
+
+        for(let j = 0; j < 2; j++) {
+            let elem = document.createElement("button");
+
+            elem.style.opacity = "0";
+            elem.addEventListener("click", function() {
+                mobileButtonPressed(j == 1, i);
+            });
+
+            if(j == 0) {
+                let width = segment.width * 1.5;
+                elem.style.width = (width) + "px";
+                elem.style.marginLeft = (margins.side - half(width)) + "px";
+            }
+            else {
+                let width = segment.width * 2;
+                elem.style.width = (width) + "px";
+                elem.style.marginRight = (margins.side - half(width)) + "px";
+            }
+            
+            let height = segment.height * 1.55;
+            elem.style.height = (height) + "px";
+            
+            if(i == 0) {
+                elem.style.marginTop = (margins.leftRightVert - half(height)) + "px";
+            }
+            if(i != 2) {
+                elem.style.marginBottom = (height * 0.85) + "px";
+            }
+
+            container.appendChild(elem);
+        }
+        
+        mainContainer.appendChild(container);
+    }
+
+    let insertRef = c.parentElement;
+    insertRef.insertBefore(mainContainer, insertRef.firstChild);
 }
 
 window.onload = function() {
@@ -186,33 +252,37 @@ window.onload = function() {
     c = document.querySelector("canvas");
     r = c.getContext("2d");
 
-    if(mobile) {
-        mobileResize();
-    }
-
 
     if(mobile && mobileVert) {
-        c.width = window.innerWidth - 30;
-        c.height = Math.floor(window.innerHeight * 0.75);
-        // c.height = 520;
+        // c.width = window.innerWidth - 30;
+        c.width = 350;
+        // c.height = Math.floor(window.innerHeight * 0.75);
+        c.height = 550;
     }
     else {
         c.width = 700;
         c.height = 575;
     }
-    console.log("MOBILE", mobile);
-    console.log("MOBILE_VERT", mobileVert);
-    console.log(c.width, c.height)
+    // console.log("MOBILE", mobile);
+    // console.log("MOBILE_VERT", mobileVert);
+    // console.log(c.width, c.height)
 
     w = c.width;
     h = c.height;
+
+    if(mobile) {
+        mobileResize();
+        createMobileControls();
+    }
 
     init();
     
     loop();
 
-    document.addEventListener("keydown", press);
-    document.addEventListener("keyup", release);
+    if(!(mobile)) {
+        document.addEventListener("keydown", press);
+        document.addEventListener("keyup", release);
+    }
     timeUpdateInterval = window.setInterval(updateTime, 1000);
     
 }
@@ -756,7 +826,6 @@ function drawNums() {
     }
     
     for(let i = 0; i < numbers.length; i++) {
-
         segmentBorder((i == highlightCheck), margins.side, y);
         r.fillStyle = "white";
         segmentDisplay(numbers[i], margins.side, y);
@@ -1030,7 +1099,7 @@ function changeTime() {
     document.getElementById("timeChange").blur();
 }
 
-let connectionStartPos = -1;
+let connectionStartPos = 0;
 
 function drawConnection(from, to, index) {
     r.fillStyle = highlightColors[from];
@@ -1409,10 +1478,35 @@ function release(e) {
     }
 }
 
+function mobileButtonPressed(buttonOnRight, row) {
+    // select another number
+    if(onRight && !(buttonOnRight)) {
+        onRight = false;
+    }
+
+    // number selected
+    if(!(onRight) && !(buttonOnRight)) {
+        pos = row;
+        connectionStartPos = pos;
+        loop();
+    }
+
+    // mult selected
+    if(!(onRight) && buttonOnRight) {
+        pos = row;
+        onRight = true;
+        // completedConnections.push([connectionStartPos, pos]);
+        confirmSelection();
+        loop();
+    }
+}
+
 function loop() {
     r.clearRect(0, 0, w, h);
-    // r.fillStyle = "#CC99FF";
-    // r.fillRect(0, 0, w, h);
+    if(SHOW_MOBILE_BOUNDS) {
+        r.fillStyle = "#CC99FF";
+        r.fillRect(0, 0, w, h);
+    }
 
     drawGameBorder();
     drawTarget();
@@ -1429,14 +1523,30 @@ function loop() {
 
 function endGame(msg) {
     // remove listeners and intervals
-    document.removeEventListener("keydown", press);
-    document.removeEventListener("keyup", release);
+    if(!(mobile)) {
+        document.removeEventListener("keydown", press);
+        document.removeEventListener("keyup", release);
+    }
+    else {
+        //
+    }
     window.clearInterval(timeUpdateInterval);
 
-    gameOverText.innerHTML = msg + " <span style='font-weight: normal;'>(space to restart)</span>";
+    gameOverText.innerHTML = msg;
+    if(!(mobile)) {
+        gameOverText.innerHTML += " <span style='font-weight: normal;'>(space to restart)</span>";
+    }
+    else {
+        gameOverText.innerHTML += " <span style='font-weight: normal;'>(tap anywhere to restart)</span>";
+    }
     gameOverText.style.opacity = "1";
 
-    document.addEventListener("keydown", restartCheck);
+    if(!(mobile)) {
+        document.addEventListener("keydown", restartCheck);
+    }
+    else {
+        //
+    }
 }
 
 function restartCheck(e) {

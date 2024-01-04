@@ -283,6 +283,10 @@ window.onload = function() {
         document.addEventListener("keydown", press);
         document.addEventListener("keyup", release);
     }
+    else {
+        document.body.addEventListener("click", mobileRestartCheck);
+    }
+
     timeUpdateInterval = window.setInterval(updateTime, 1000);
     
 }
@@ -980,6 +984,9 @@ function drawCurrent() {
 
     // add leading zeros
     let currentString = currentDisplay.toString();
+    if(mobile) {
+        currentString = current.toString();
+    }
     let temp = currentString;
     switch (currentString.length) {
         case 1:
@@ -1386,7 +1393,20 @@ function confirmSelection() {
     }
     
     if(completedConnections.length == 3) {
-        gameOver = true;
+        if(mobile) {
+            if(current == total) {
+                currentColor = "springgreen";
+            }
+            else {
+                currentColor = "tomato";
+            }
+
+            loop();
+        }
+
+        if(!(mobile)) {
+            gameOver = true;
+        }
 
         if(current == total) {
             endGame("Correct Input");
@@ -1415,6 +1435,10 @@ function confirmSelection() {
                 }
             }
         }
+    }
+
+    if(mobile) {
+        connectionStartPos = pos;
     }
 }
 
@@ -1479,25 +1503,42 @@ function release(e) {
 }
 
 function mobileButtonPressed(buttonOnRight, row) {
-    // select another number
-    if(onRight && !(buttonOnRight)) {
-        onRight = false;
-    }
+    if(!(pressing)) {
+        // number selected
+        if(!(buttonOnRight)) {
+            let validPos = true;
+            for(let c of completedConnections) {
+                if(c[0] == row) {
+                    validPos = false;
+                }
+            }
 
-    // number selected
-    if(!(onRight) && !(buttonOnRight)) {
-        pos = row;
-        connectionStartPos = pos;
-        loop();
-    }
+            if(validPos) {
+                pos = row;
+                connectionStartPos = pos;
+                loop();
+            }
+        }
 
-    // mult selected
-    if(!(onRight) && buttonOnRight) {
-        pos = row;
-        onRight = true;
-        // completedConnections.push([connectionStartPos, pos]);
-        confirmSelection();
-        loop();
+        // mult selected
+        else if(buttonOnRight) {
+            let validPos = true;
+            for(let c of completedConnections) {
+                if(c[1] == row) {
+                    validPos = false;
+                }
+            }
+
+            if(validPos) {
+                pos = row;
+                confirmSelection();
+                onRight = false;
+                
+                if(!(gameOver)) {
+                    loop();
+                }
+            }
+        }
     }
 }
 
@@ -1527,9 +1568,6 @@ function endGame(msg) {
         document.removeEventListener("keydown", press);
         document.removeEventListener("keyup", release);
     }
-    else {
-        //
-    }
     window.clearInterval(timeUpdateInterval);
 
     gameOverText.innerHTML = msg;
@@ -1545,7 +1583,9 @@ function endGame(msg) {
         document.addEventListener("keydown", restartCheck);
     }
     else {
-        //
+        window.setTimeout(function() {
+            gameOver = true;
+        }, 250);
     }
 }
 
@@ -1568,6 +1608,25 @@ function restartCheck(e) {
 
         document.addEventListener("keydown", press);
         document.addEventListener("keyup", release);
+        timeUpdateInterval = window.setInterval(updateTime, 1000);
+    }
+}
+
+function mobileRestartCheck() {
+    if(gameOver) {
+        gameOverText.style.opacity = "0";
+        timeLeft = time;
+        completedConnections = [];
+        onRight = false;
+        pos = 0;
+        connectionStartPos = pos;
+        current = 0;
+        currentDisplay = 0;
+        currentColor = "white";
+        gameOver = false;
+
+        init();
+        loop();
         timeUpdateInterval = window.setInterval(updateTime, 1000);
     }
 }

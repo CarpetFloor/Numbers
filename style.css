@@ -4,6 +4,7 @@ body {
     background-color: #181A1B;
     width: 99%;
     height: 100%;
+    overflow: hidden;
 }
 div {
     display: flex;
